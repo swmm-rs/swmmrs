@@ -66,7 +66,7 @@ resolve_latest_rust_tag() {
             pattern = "^.*\"" key "\"[[:space:]]*:[[:space:]]*\""
             if (value !~ pattern) return ""
             sub(pattern, "", value)
-            sub(/\".*$/, "", value)
+            sub(/".*$/, "", value)
             return value
         }
         function bool_field(json, key, value, pattern) {
