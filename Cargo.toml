@@ -13,7 +13,7 @@ license = "Apache-2.0"
 
 [workspace.dependencies]
 swmmrs = { version = "0.1.0", path = "crates/solver" }
-swmm-output = { version = "0.2.1", path = "crates/output" }
+swmm-output = { version = "0.1.0", path = "crates/output" }
 
 [profile.release]
 opt-level = 3

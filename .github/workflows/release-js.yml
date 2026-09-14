@@ -216,7 +216,7 @@ jobs:
       # workflow filename release-js.yml, and GitHub environment npm.
       # Enable direct npm publish in the trusted publisher's allowed actions.
       - name: Publish using npm trusted publishing
-        run: npm publish npm-package/*.tgz --access public --ignore-scripts
+        run: npm publish ./npm-package/*.tgz --access public --ignore-scripts
 
   publish-github-release:
     name: Publish JavaScript GitHub release

@@ -1,6 +1,6 @@
 [package]
 name = "swmm-output"
-version = "0.2.1"
+version = "0.1.0"
 description = "Standalone reader for finalized and recoverable SWMM binary output files"
 edition = { workspace = true }
 rust-version = { workspace = true }
