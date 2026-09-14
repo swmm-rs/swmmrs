@@ -21,8 +21,11 @@
 
 === "Windows"
 
+    Download first, review the script, then run it:
+
     ```powershell
-    powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1 | iex"
+    Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1" -OutFile "$HOME\Downloads\install-swmmrs.ps1"
+    powershell -NoProfile -File "$HOME\Downloads\install-swmmrs.ps1"
     ```
 
 <!-- markdownlint-enable MD046 -->

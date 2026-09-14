@@ -18,13 +18,23 @@ wget -qO- https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.
 
 ## Windows
 
-Use Windows PowerShell 5.1 or PowerShell 7:
+From Windows PowerShell 5.1 or PowerShell 7, download the script first:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1 | iex"
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1" -OutFile "$HOME\Downloads\install-swmmrs.ps1"
 ```
 
-`-ExecutionPolicy Bypass` applies only to this PowerShell process; it does not change the saved system policy.
+Review the downloaded script before running it (see below), then execute it in a
+fresh Windows PowerShell process:
+
+```powershell
+powershell -NoProfile -File "$HOME\Downloads\install-swmmrs.ps1"
+```
+
+`-NoProfile` skips shell startup customizations. This process does not pipe remote
+code into `iex` or bypass execution policy. If Defender flags the script or your
+execution policy blocks it, do not disable protection; use a manually downloaded
+release ZIP if it is not flagged, or ask your administrator for approval.
 
 ## Inspect before installing
 
@@ -41,9 +51,13 @@ sh install.sh
 ### Windows
 
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1 -OutFile install.ps1
-Get-Content .\install.ps1
-powershell -ExecutionPolicy Bypass -File .\install.ps1
+notepad "$HOME\Downloads\install-swmmrs.ps1"
+```
+
+You can also request a Defender scan of the downloaded script:
+
+```powershell
+Start-MpScan -ScanType CustomScan -ScanPath "$HOME\Downloads\install-swmmrs.ps1"
 ```
 
 ## Install a specific version
@@ -53,14 +67,16 @@ Set `SWMMRS_VERSION` to an `rs-*` release tag. A bare semantic version or legacy
 ### macOS and Linux
 
 ```sh
-curl -LsSf https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.sh | SWMMRS_VERSION=rs-0.2.1 sh
+curl -LsSf https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.sh | SWMMRS_VERSION=rs-0.1.0 sh
 ```
 
 ### Windows
 
 ```powershell
-$env:SWMMRS_VERSION = "rs-0.2.1"
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1 | iex"
+# Download and review the script as described above first.
+$env:SWMMRS_VERSION = "rs-0.1.0"
+powershell -NoProfile -File "$HOME\Downloads\install-swmmrs.ps1"
+Remove-Item Env:SWMMRS_VERSION
 ```
 
 ## Installation location and PATH
@@ -84,9 +100,11 @@ curl -LsSf https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install
 ### Windows
 
 ```powershell
+# Download and review the script as described above first.
 $env:SWMMRS_NO_MODIFY_PATH = "1"
 $env:SWMMRS_INSTALL_DIR = "$HOME\bin"
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1 | iex"
+powershell -NoProfile -File "$HOME\Downloads\install-swmmrs.ps1"
+Remove-Item Env:SWMMRS_NO_MODIFY_PATH, Env:SWMMRS_INSTALL_DIR
 ```
 
 ## Supported systems
@@ -125,16 +143,14 @@ Replace the path if you used `SWMMRS_INSTALL_DIR`. Do not disable Gatekeeper glo
 
 ### Windows
 
-Windows may show **Windows protected your PC** and identify `runswmmrs.exe` as coming from an unknown publisher. Select **More info**, confirm the app name is `runswmmrs.exe`, then select **Run anyway**.
+An **unknown publisher** or SmartScreen reputation warning is distinct from a
+Defender malware detection. A matching SHA-256 checksum confirms the archive
+matches the release asset; it does not prove that the software is safe.
 
-Alternatively, unblock only the default installed executable in PowerShell:
-
-```powershell
-Unblock-File -LiteralPath "$HOME\.local\bin\runswmmrs.exe"
-& "$HOME\.local\bin\runswmmrs.exe" --version
-```
-
-Replace the path if you used `SWMMRS_INSTALL_DIR`. If **Run anyway** is unavailable or the executable remains blocked, a managed Windows policy controls the decision; ask the administrator to approve it rather than disabling SmartScreen globally.
+If Defender reports a threat in the script or executable, stop and report the
+exact detection to the maintainers for review. Do not add antivirus exclusions
+or disable Defender or SmartScreen. If a managed Windows policy blocks
+installation, ask your administrator for approval.
 
 ## Uninstall
 

@@ -254,7 +254,7 @@ main() {
     esac
     if ! printf '%s\n' "$tag" \
         | awk '/^rs-(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)([-.+][0-9A-Za-z.-]+)?$/ { valid = 1 } END { exit !valid }'; then
-        err "SWMMRS_VERSION must be latest or a Rust release such as rs-0.2.1"
+        err "SWMMRS_VERSION must be latest or a Rust release such as rs-0.1.0"
     fi
 
     target=$(detect_target)

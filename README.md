@@ -201,10 +201,11 @@ macOS and Linux:
 curl -LsSf https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.sh | sh
 ```
 
-Windows PowerShell:
+Windows PowerShell: download first, review the script, then run it:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1 | iex"
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1" -OutFile "$HOME\Downloads\install-swmmrs.ps1"
+powershell -NoProfile -File "$HOME\Downloads\install-swmmrs.ps1"
 ```
 
 See the [command-line installation guide](docs/cli/install.md) for specific

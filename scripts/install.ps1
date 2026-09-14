@@ -1,5 +1,7 @@
 # Install runswmmrs from a GitHub release.
-# Usage: powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1 | iex"
+# Download, review, then run (Windows PowerShell):
+# Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/swmm-rs/swmmrs/main/scripts/install.ps1" -OutFile "$HOME\Downloads\install-swmmrs.ps1"
+# powershell -NoProfile -File "$HOME\Downloads\install-swmmrs.ps1"
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version 2.0
@@ -78,7 +80,10 @@ function Resolve-LatestRustTag {
             Uri = "$GitHubApiUrl/repos/$Repository/releases?per_page=100&page=$page"
             Headers = @{ Accept = "application/vnd.github+json" }
         }
-        $releases = @(Invoke-RestMethod @parameters)
+        # Invoke-RestMethod can emit a JSON array as one pipeline object.
+        # Assign first, then normalize it so Where-Object sees each release.
+        $response = Invoke-RestMethod @parameters
+        $releases = @($response)
         $release = $releases | Where-Object {
             -not $_.draft -and
             -not $_.prerelease -and
@@ -125,7 +130,7 @@ $tag = if ($Version -eq "latest") {
     "rs-$Version"
 }
 if ($tag -notmatch "^rs-(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:[-.+][0-9A-Za-z.-]+)?$") {
-    throw "SWMMRS_VERSION must be latest or a Rust release such as rs-0.2.1."
+    throw "SWMMRS_VERSION must be latest or a Rust release such as rs-0.1.0."
 }
 
 $target = Get-TargetTriple
