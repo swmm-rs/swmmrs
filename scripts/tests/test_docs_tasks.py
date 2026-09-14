@@ -33,6 +33,14 @@ class Recipes(unittest.TestCase):
         self.assertLess(output.index("run build"), output.index("zensical build"))
         self.assertLess(output.index("zensical build"), output.index("check-site.py"))
 
+    def test_documentation_tooling_lives_outside_site_sources(self):
+        for package in ("typescript-docs", "swmm_pygments"):
+            self.assertTrue((ROOT / "tools" / package).is_dir())
+            self.assertFalse((ROOT / "docs" / package).exists())
+        workflow = (ROOT / ".github/workflows/docs.yml").read_text()
+        self.assertIn("cache-dependency-path: tools/typescript-docs/package-lock.json", workflow)
+        self.assertTrue((ROOT / "tools/typescript-docs/package-lock.json").is_file())
+
     def test_preview_generates_before_starting_watchers(self):
         output = self.dry_run("docs-serve")
         self.assertLess(output.index("run build"), output.index("serve-docs.py"))
@@ -73,7 +81,7 @@ class PreviewCommand(unittest.TestCase):
         self.assertIn("--preserveWatchOutput", watcher[0])
         self.assertEqual(watcher[0][-2:], ["--cleanOutputDir", "false"])
         self.assertEqual(supervise.call_args.kwargs["ready_message"], "json generated at")
-        self.assertEqual(watcher[1], ROOT / "docs/typescript-docs")
+        self.assertEqual(watcher[1], ROOT / "tools/typescript-docs")
         self.assertEqual(server[0], [sys.executable, "-m", "zensical", "serve",
                                      "--dev-addr", "127.0.0.1:8001"])
         self.assertEqual(server[1], ROOT)

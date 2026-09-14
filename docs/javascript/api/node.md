@@ -8,4 +8,4 @@ See the user guide for [configuration workflows](../guides/configure-model.md#co
 [collecting results and statistics](../guides/collect-results.md).
 
 <!-- API content is generated from TSDoc in js/src/swmmrs. Do not duplicate it here. -->
---8<-- "docs/typescript-docs/.generated/node.md"
+--8<-- "tools/typescript-docs/.generated/node.md"

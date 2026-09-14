@@ -63,7 +63,7 @@ for path in files:
         link_count += 1
 
 
-config = json.loads((root / "docs/typescript-docs/typedoc.json").read_text())
+config = json.loads((root / "tools/typescript-docs/typedoc.json").read_text())
 families = [Path(entry).stem for entry in config["entryPoints"]]
 for family in families:
     page = load(site / f"javascript/api/{family}/index.html")

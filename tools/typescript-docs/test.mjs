@@ -151,7 +151,7 @@ test("every API family has a thin include page registered in site navigation", (
   const nav = read("../../zensical.toml");
   for (const family of families) {
     const page = read(`../../docs/javascript/api/${family}.md`);
-    assert.ok(page.includes(`--8<-- "docs/typescript-docs/.generated/${family}.md"`));
+    assert.ok(page.includes(`--8<-- "tools/typescript-docs/.generated/${family}.md"`));
     assert.doesNotMatch(page, /^\|/m);
     assert.doesNotMatch(page, /^```/m);
     assert.ok(nav.includes(`"javascript/api/${family}.md"`), `${family}: missing navigation`);

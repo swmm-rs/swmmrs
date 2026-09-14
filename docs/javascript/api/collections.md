@@ -12,4 +12,4 @@ Definition handles have dedicated references:
 - [RDII](rdii.md): AMM models, RTK unit hydrographs, and assignments.
 - [LID](lid.md): control layers and subcatchment-local usages.
 
---8<-- "docs/typescript-docs/.generated/collections.md"
+--8<-- "tools/typescript-docs/.generated/collections.md"

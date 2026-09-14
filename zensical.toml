@@ -158,7 +158,7 @@ site_description = "Parity-first Rust port of the EPA SWMM solver"
 repo_url = "https://github.com/swmm-rs/swmmrs"
 repo_name = "swmm-rs/swmmrs"
 edit_uri = "edit/main/docs/"
-watch = ["README.md", "docs/swmm_pygments/src/swmm_pygments/lexer.py", "docs/typescript-docs/.generated"]
+watch = ["README.md", "tools/swmm_pygments/src/swmm_pygments/lexer.py", "tools/typescript-docs/.generated"]
 extra_css = [
     "stylesheets/solarized.css",
     "stylesheets/home.css",

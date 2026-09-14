@@ -8,4 +8,4 @@ scenario operations. See [Run a model](../guides/run-model.md) for workflows.
 See the [continuation guide](../guides/checkpoints-and-forks.md) for choosing a
 mechanism. The method and bundle contracts are generated below.
 
---8<-- "docs/typescript-docs/.generated/simulation.md"
+--8<-- "tools/typescript-docs/.generated/simulation.md"

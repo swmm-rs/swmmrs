@@ -18,7 +18,7 @@ and the compiler stands by the airlock asking who owns what.
   </div>
   <div class="swmm-proof-item">
     <span class="swmm-proof-label">Engine room</span>
-    <strong>Fastest tested engine</strong>
+    <strong>Faster engine</strong>
     <span>in the published benchmarks</span>
   </div>
   <div class="swmm-proof-item">
@@ -118,8 +118,8 @@ companion `swmm-bench` benchmark runs SWMM-compatible engines on large hydraulic
 models drawn from day-to-day modelling work. It reports simulation duration
 beside report and binary-output similarity.
 
-On the tested workloads, `swmmrs` is the fastest tested engine and has the
-smallest result distance from EPA SWMM.
+On the tested workloads, `swmmrs` is faster than EPA SWMM
+while maintaining a small result distance from the original engine.
 
 [Read the benchmark scope and interpretation](benchmark-results.md) or inspect
 the [latest HTML benchmark report](benchmark-report.html). No galactic standards

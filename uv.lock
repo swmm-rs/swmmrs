@@ -672,7 +672,7 @@ wheels = [
 [[package]]
 name = "swmm-pygments"
 version = "0.1.0"
-source = { editable = "docs/swmm_pygments" }
+source = { editable = "tools/swmm_pygments" }
 dependencies = [
     { name = "pygments" },
     { name = "pymdown-extensions" },
@@ -703,7 +703,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "mkdocstrings-python", specifier = ">=2.0.5" },
-    { name = "swmm-pygments", editable = "docs/swmm_pygments" },
+    { name = "swmm-pygments", editable = "tools/swmm_pygments" },
     { name = "zensical", specifier = ">=0.0.51" },
 ]
 

@@ -8,12 +8,12 @@ default:
 
 # Install locked documentation dependencies (requires Node.js 22+ and uv).
 docs-deps:
-    npm --prefix docs/typescript-docs ci
+    npm --prefix tools/typescript-docs ci
     uv sync --locked
 
 # Generate the TypeScript API reference from source comments.
 tsdoc:
-    npm --prefix docs/typescript-docs run build
+    npm --prefix tools/typescript-docs run build
 
 # Generate the TypeScript reference and build the full documentation site.
 docs: tsdoc
@@ -21,9 +21,9 @@ docs: tsdoc
 
 # Build the site and run documentation tooling and rendered-reference checks.
 docs-check: docs
-    node --test docs/typescript-docs/test.mjs
+    node --test tools/typescript-docs/test.mjs
     uv run --locked python -m unittest discover -s scripts/tests -p 'test_docs_*.py'
-    uv run --locked python docs/typescript-docs/check-site.py
+    uv run --locked python tools/typescript-docs/check-site.py
 
 # Preview docs with TypeDoc and Zensical watching; extra arguments go to Zensical.
 docs-serve *args: tsdoc

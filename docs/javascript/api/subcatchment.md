@@ -11,4 +11,4 @@ LID usage and layer contracts have their own [LID reference](lid.md).
 See [Configure specialized definitions](../guides/configure-model.md#configure-specialized-definitions)
 for an example.
 
---8<-- "docs/typescript-docs/.generated/subcatchment.md"
+--8<-- "tools/typescript-docs/.generated/subcatchment.md"

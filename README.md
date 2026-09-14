@@ -169,8 +169,8 @@ The companion [benchmark
 report](https://swmm-rs.github.io/swmmrs/benchmark-report.html) compares
 SWMM-compatible engines on large, complex hydraulic models representative of
 day-to-day modelling work. It reports simulation duration alongside report and
-binary-output similarity. On those workloads, `swmmrs` is the fastest tested
-engine and has the smallest result distance from EPA SWMM. The findings apply
+binary-output similarity. On those workloads, `swmmrs` is faster than EPA SWMM
+while maintaining a small result distance from the original engine. The findings apply
 to the engines, versions, workloads, and benchmark environment in the report.
 They do not confer faster-than-light status on every possible SWMM project or
 computer.

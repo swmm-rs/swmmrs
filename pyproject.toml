@@ -21,7 +21,7 @@ default = true
 
 [tool.uv.workspace]
 members = [
-    "docs/swmm_pygments",
+    "tools/swmm_pygments",
 ]
 
 [tool.uv.sources]

@@ -11,7 +11,7 @@ Native, typed Python bindings for the Rust port of the EPA Storm Water Managemen
 > [!NOTE]
 > **Run SWMM workloads faithfully, faster, and through a modern Python API.**
 >
-> The native solver [passes broad regression comparisons against EPA SWMM](https://swmm-rs.github.io/swmmrs/regression-validation/) and, among the engines in the [real-world benchmarks](https://swmm-rs.github.io/swmmrs/benchmark-results/), has the smallest result distance and fastest runtime. Python adds isolated simulations, typed model access, interactive controls, checkpoints, snapshots, statistics, and structured binary-output queries.
+> The native solver [passes broad regression comparisons against EPA SWMM](https://swmm-rs.github.io/swmmrs/regression-validation/). Python adds isolated simulations, typed model access, interactive controls, checkpoints, snapshots, statistics, and structured binary-output queries.
 >
 > The solver port is complete, but `swmmrs` and its public APIs remain pre-release. Published results are strong parity evidence, not proof for every model or routing condition.
 

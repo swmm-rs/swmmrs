@@ -91,7 +91,11 @@ and substantial examples in the JavaScript user guide, not in API Markdown.
 Use `{@link Symbol}` for API links and `{@inheritDoc Type.property}` when a patch
 or snapshot field shares an existing description.
 
-The `docs/typescript-docs/*.ts` entry points select public exports by family;
+Documentation tooling lives outside the site sources: `tools/typescript-docs/`
+generates the JavaScript API reference, and `tools/swmm_pygments/` provides SWMM
+syntax highlighting.
+
+The `tools/typescript-docs/*.ts` entry points select public exports by family;
 they must not contain duplicate declarations or API descriptions. Each API page
 includes generated Markdown at its existing site URL. When adding an export,
 select it in exactly one entry point; when adding a family, register its entry

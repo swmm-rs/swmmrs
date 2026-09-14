@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: docs/typescript-docs/package-lock.json
+          cache-dependency-path: tools/typescript-docs/package-lock.json
 
       - name: Install pinned Just
         run: |

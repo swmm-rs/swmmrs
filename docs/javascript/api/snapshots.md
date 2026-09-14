@@ -12,4 +12,4 @@ Family-specific result, quality, and statistics records are documented with
 The standalone reader has its own [Binary output reference](output.md) and
 [Read binary output guide](../guides/read-output.md).
 
---8<-- "docs/typescript-docs/.generated/snapshots.md"
+--8<-- "tools/typescript-docs/.generated/snapshots.md"

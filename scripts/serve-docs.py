@@ -94,7 +94,7 @@ def supervise(commands: list[tuple[list[str], Path]], ready_message: str | None 
 
 
 def main() -> int:
-    typedoc = ROOT / "docs/typescript-docs"
+    typedoc = ROOT / "tools/typescript-docs"
     return supervise([
         (["node", "node_modules/typedoc/bin/typedoc", "--options", "typedoc.json",
           "--watch", "--preserveWatchOutput", "--cleanOutputDir", "false"], typedoc),
