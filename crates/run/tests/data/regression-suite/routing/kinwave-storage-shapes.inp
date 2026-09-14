@@ -1,0 +1,97 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Non-dynamic storage routing through every analytic shape and a tabular area curve.
+
+[OPTIONS]
+DRY_STEP             00:01:00
+START_DATE           01/01/2020
+FLOW_UNITS           CFS
+DRY_DAYS             0
+REPORT_START_TIME    00:00:00
+REPORT_START_DATE    01/01/2020
+END_DATE             01/01/2020
+NORMAL_FLOW_LIMITED  BOTH
+LINK_OFFSETS         DEPTH
+INFILTRATION         HORTON
+ROUTING_STEP         00:00:05
+WET_STEP             00:01:00
+FLOW_ROUTING         KINWAVE
+START_TIME           00:00:00
+REPORT_STEP          00:05:00
+END_TIME             02:00:00
+
+[EVAPORATION]
+CONSTANT             0.01
+DRY_ONLY             NO
+
+[STORAGE]
+;;Name  Elevation  MaxDepth  InitDepth  Shape        Param1      Param2  Param3  SurDepth  Fevap
+S6      10         5         0.5        TABULAR      AREA_CURVE                  0         0.5
+S3      10         5         0.5        PARABOLIC    40          40      5       0         0.5
+S5      10         5         0.5        FUNCTIONAL   500         1       1000    0         0.5
+S2      10         5         0.5        CONICAL      40          40      2       0         0.5
+S1      10         5         0.5        CYLINDRICAL  40          40      0       0         0.5
+S4      10         5         0.5        PYRAMIDAL    40          40      2       0         0.5
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT5    0          FREE              NO
+OUT2    0          FREE              NO
+OUT4    0          FREE              NO
+OUT1    0          FREE              NO
+OUT3    0          FREE              NO
+OUT6    0          FREE              NO
+
+[CONDUITS]
+;;Name  From Node  To Node  Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+C4      S4         OUT4     500     0.013      0         0          0         0
+C3      S3         OUT3     500     0.013      0         0          0         0
+C5      S5         OUT5     500     0.013      0         0          0         0
+C2      S2         OUT2     500     0.013      0         0          0         0
+C1      S1         OUT1     500     0.013      0         0          0         0
+C6      S6         OUT6     500     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link  Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+C1      CIRCULAR  3      0      0      0      1
+C4      CIRCULAR  3      0      0      0      1
+C6      CIRCULAR  3      0      0      0      1
+C2      CIRCULAR  3      0      0      0      1
+C5      CIRCULAR  3      0      0      0      1
+C3      CIRCULAR  3      0      0      0      1
+
+[INFLOWS]
+;;Node  Constituent  Time Series  Type  Mfactor  Sfactor  Baseline
+S6      FLOW         Flow         FLOW  1.0      1.0      0
+S4      FLOW         Flow         FLOW  1.0      1.0      0
+S5      FLOW         Flow         FLOW  1.0      1.0      0
+S3      FLOW         Flow         FLOW  1.0      1.0      0
+S1      FLOW         Flow         FLOW  1.0      1.0      0
+S2      FLOW         Flow         FLOW  1.0      1.0      0
+
+[TIMESERIES]
+;;Name  Date  Time  Value
+Flow          0:00  0
+Flow          0:10  2
+Flow          0:30  8
+Flow          1:00  8
+Flow          1:30  2
+Flow          2:00  0
+
+[CURVES]
+;;Name      Type     X-Value  Y-Value
+AREA_CURVE  STORAGE  0        1000
+AREA_CURVE           1        1500
+AREA_CURVE           2        2200
+AREA_CURVE           3        3000
+AREA_CURVE           4        4000
+AREA_CURVE           5        5000
+
+[REPORT]
+INPUT          YES
+CONTINUITY     YES
+FLOWSTATS      YES
+CONTROLS       NO
+SUBCATCHMENTS  NONE
+NODES          ALL
+LINKS          ALL

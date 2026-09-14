@@ -1,0 +1,56 @@
+[data-md-component="toc"] > .md-nav__item {
+  position: relative;
+}
+
+[data-md-component="toc"] > .md-nav__item > .md-nav[hidden] {
+  display: none;
+}
+
+[data-md-component="toc"] > .md-nav__item > .md-nav__link {
+  padding-right: 1.5rem;
+}
+
+.toc-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--md-default-fg-color--light);
+  cursor: pointer;
+}
+
+.toc-toggle::before {
+  content: "›";
+  display: inline-block;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 150ms ease;
+}
+
+.toc-toggle[aria-expanded="true"]::before {
+  transform: rotate(90deg);
+}
+
+.toc-toggle:focus-visible {
+  border-radius: 0.1rem;
+  outline: 0.1rem solid var(--md-accent-fg-color);
+  outline-offset: 0.1rem;
+}
+
+@media screen and (min-width: 76.25em) {
+  body:has(.doc-object) .md-sidebar--secondary {
+    width: 17rem;
+  }
+
+  body:has(.doc-object)
+    .md-sidebar--secondary
+    > .md-sidebar__scrollwrap
+    > .md-sidebar__inner
+    > .md-nav--secondary {
+    width: 16.4rem;
+  }
+}

@@ -1,0 +1,73 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Purpose-built runoff interface consumer
+
+[OPTIONS]
+FLOW_UNITS           CFS
+INFILTRATION         HORTON
+FLOW_ROUTING         DYNWAVE
+START_DATE           01/01/2020
+START_TIME           00:00:00
+REPORT_START_DATE    01/01/2020
+REPORT_START_TIME    00:00:00
+END_DATE             01/01/2020
+END_TIME             03:00:00
+REPORT_STEP          00:05:00
+WET_STEP             00:01:00
+DRY_STEP             01:00:00
+ROUTING_STEP         00:00:05
+THREADS              1
+
+[FILES]
+USE RUNOFF "runoff-interface.bin"
+
+[EVAPORATION]
+CONSTANT             0.0
+DRY_ONLY             NO
+
+[RAINGAGES]
+;;Name  Format  Interval  SCF  Source
+GAGE    VOLUME  00:05     1.0  TIMESERIES RAIN
+
+[SUBCATCHMENTS]
+;;Name  Rain Gage  Outlet  Area  %Imperv  Width  %Slope  CurbLen
+SUB1    GAGE       J1      1.0   100      200    1.0     0
+
+[SUBAREAS]
+;;Subcatchment  N-Imperv  N-Perv  S-Imperv  S-Perv  PctZero  RouteTo  PctRouted
+SUB1             0.01      0.10    0.05      0.05    100      OUTLET   100
+
+[INFILTRATION]
+;;Subcatchment  MaxRate  MinRate  Decay  DryTime  MaxInfil
+SUB1             3.0      0.5      4.0    7.0      0
+
+[JUNCTIONS]
+;;Name  Elevation  MaxDepth  InitDepth  SurDepth  Aponded
+J1      0          5         0          0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT     -1         FREE              NO
+
+[CONDUITS]
+;;Name  From Node  To Node  Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+C1      J1         OUT      200     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link  Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+C1      CIRCULAR  2      0      0      0      1
+
+[TIMESERIES]
+;;Name  Date        Time   Value
+RAIN    01/01/2020  00:00  0.0
+RAIN    01/01/2020  00:05  0.30
+RAIN    01/01/2020  00:10  0.20
+RAIN    01/01/2020  00:15  0.0
+RAIN    01/01/2020  03:00  0.0
+
+[REPORT]
+INPUT              NO
+CONTROLS           NO
+SUBCATCHMENTS      ALL
+NODES              ALL
+LINKS              ALL

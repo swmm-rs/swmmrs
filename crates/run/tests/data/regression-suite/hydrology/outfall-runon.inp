@@ -1,0 +1,84 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Hydraulic outfall discharge routed onto a downstream subcatchment.
+
+[OPTIONS]
+REPORT_STEP          00:05:00
+DRY_STEP             00:01:00
+ROUTING_STEP         00:00:10
+REPORT_START_TIME    00:00:00
+END_DATE             01/01/2020
+DRY_DAYS             0
+END_TIME             04:00:00
+INFILTRATION         HORTON
+LINK_OFFSETS         DEPTH
+START_TIME           00:00:00
+WET_STEP             00:01:00
+REPORT_START_DATE    01/01/2020
+FLOW_ROUTING         KINWAVE
+START_DATE           01/01/2020
+SKIP_STEADY_STATE    NO
+FLOW_UNITS           CFS
+
+[EVAPORATION]
+CONSTANT             0
+DRY_ONLY             NO
+
+[RAINGAGES]
+;;Name  Format     Interval  SCF  Source
+RAIN    INTENSITY  0:05      1.0  TIMESERIES  STORM
+DRY     INTENSITY  0:05      1.0  TIMESERIES  ZERO_RAIN
+
+[SUBCATCHMENTS]
+;;Name  RainGage  Outlet  Area  %Imperv  Width  %Slope  CurbLen
+DOWN    DRY       J_DOWN  0.5   100      300    1       0
+UP      RAIN      J_UP    1.0   100      500    1       0
+
+[SUBAREAS]
+;;Name  N-Imperv  N-Perv  S-Imperv  S-Perv  PctZero  RouteTo
+DOWN    0.01      0.1     0         0       100      OUTLET
+UP      0.01      0.1     0         0       100      OUTLET
+
+[INFILTRATION]
+;;Name  MaxRate  MinRate  Decay  DryTime  MaxInfil
+UP      3.0      0.5      4      7        0
+DOWN    3.0      0.5      4      7        0
+
+[JUNCTIONS]
+;;Name  Elevation  MaxDepth  InitDepth  SurDepth  Aponded
+J_UP    10         5         0          0         0
+J_DOWN  10         5         0          0         0
+
+[OUTFALLS]
+;;Name    Elevation  Type  StageData  Gated  RouteTo
+O_FINAL   0          FREE             NO
+O_ROUTE   0          FREE             NO     DOWN
+
+[CONDUITS]
+;;Name  From    To       Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+C_DOWN  J_DOWN  O_FINAL  200     0.013      0         0          0         0
+C_UP    J_UP    O_ROUTE  200     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link  Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+C_UP    CIRCULAR  2      0      0      0      1
+C_DOWN  CIRCULAR  2      0      0      0      1
+
+[TIMESERIES]
+;;Name      Date        Time   Value
+ZERO_RAIN   01/01/2020  00:00  0
+ZERO_RAIN               04:00  0
+STORM       01/01/2020  00:00  0
+STORM                   00:05  1.5
+STORM                   00:25  0
+STORM                   02:00  0
+STORM                   02:05  1.0
+STORM                   02:25  0
+STORM                   04:00  0
+
+[REPORT]
+INPUT          YES
+CONTROLS       NO
+SUBCATCHMENTS  ALL
+NODES          ALL
+LINKS          ALL

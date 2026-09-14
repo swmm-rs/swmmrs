@@ -1,0 +1,170 @@
+[TITLE]
+Provenance: pyswmm/swmm-nrtestsuite/crates/solver/tests/data/lid/test_w_wo_*_2Subcatchments.inp.
+Exercises every SWMM LID process and GHCND climate-file input in one runoff model.
+
+[OPTIONS]
+ALLOW_PONDING        NO
+SYS_FLOW_TOL         5
+SWEEP_START          01/01
+REPORT_STEP          00:15:00
+START_TIME           00:00:00
+MINIMUM_STEP         0.5
+ROUTING_STEP         00:00:30
+MIN_SURFAREA         12.557
+REPORT_START_DATE    07/01/1996
+DRY_DAYS             0
+REPORT_START_TIME    00:00:00
+LAT_FLOW_TOL         5
+INFILTRATION         HORTON
+LENGTHENING_STEP     0
+INERTIAL_DAMPING     PARTIAL
+SKIP_STEADY_STATE    NO
+DRY_STEP             00:05:00
+FLOW_UNITS           CFS
+MIN_SLOPE            0
+THREADS              1
+SWEEP_END            12/31
+WET_STEP             00:05:00
+LINK_OFFSETS         DEPTH
+VARIABLE_STEP        0.75
+FLOW_ROUTING         KINWAVE
+NORMAL_FLOW_LIMITED  BOTH
+RULE_STEP            00:00:00
+FORCE_MAIN_EQUATION  H-W
+START_DATE           07/01/1996
+MAX_TRIALS           8
+END_DATE             07/03/1996
+HEAD_TOLERANCE       0.005
+END_TIME             00:00:00
+
+[EVAPORATION]
+TEMPERATURE
+DRY_ONLY             NO
+
+[TEMPERATURE]
+FILE                  "ghcnd-temperature.dat" 07/01/1996 C10
+
+[RAINGAGES]
+;;Name  Format     Interval  SCF  Source
+1        INTENSITY  0:15      1.0  TIMESERIES Rainfall
+
+[SUBCATCHMENTS]
+;;Name   Rain Gage  Outlet  Area  %Imperv  Width  %Slope  CurbLen
+withLID  1          2       5     50       100    1       0
+noLID    1          2       5     50       100    1       0
+
+[SUBAREAS]
+;;Subcatchment  N-Imperv  N-Perv  S-Imperv  S-Perv  PctZero  RouteTo
+withLID         0.01      0.1     0.05      0.05    25       OUTLET
+noLID           0.01      0.1     0.05      0.05    25       OUTLET
+
+[INFILTRATION]
+;;Subcatchment  MaxRate  MinRate  Decay  DryTime  MaxInfil
+withLID         1.2      0.1      2      7        0
+noLID           1.2      0.1      2      7        0
+
+[POLLUTANTS]
+;;Name  Units  Crain  Cgw  Crdii  Kdecay  SnowOnly  CoPollutant  CoFrac  Cdwf  Cinit
+TSS     MG/L   10      0    0      0       NO        *            0       0     0
+
+[LANDUSES]
+;;Name  SweepInterval  Availability  LastSweep
+URBAN   0              0             0
+
+[COVERAGES]
+;;Subcatchment  LandUse  Percent
+noLID           URBAN    100
+withLID         URBAN    100
+
+[BUILDUP]
+;;LandUse  Pollutant  Function  Coeff1  Coeff2  Coeff3  PerUnit
+URBAN      TSS        NONE      0       0       0       AREA
+
+[WASHOFF]
+;;LandUse  Pollutant  Function  Coeff1  Coeff2  SweepRmvl  BmpRmvl
+URBAN      TSS        EMC       1       1       0          0
+
+[LID_CONTROLS]
+;;Name  Type/Layer  Parameters
+GR      GR
+GR      SURFACE     6   0.25  0.1    1.0   5
+GR      SOIL        12  0.5   0.2    0.1   0.5   10.0  3.5
+GR      DRAINMAT    3   0.5   0.1
+SWALE   VS
+SWALE   SURFACE     12  0.25  0.1    1.0   1
+RG      RG
+RG      SURFACE     6   0.25  0.1    1.0   5
+RG      SOIL        12  0.5   0.2    0.1   0.5   10.0  3.5
+RG      STORAGE     0   0.75  0.5    0
+IT      IT
+IT      SURFACE     6   0.25  0.1    1.0   5
+IT      STORAGE     12  0.75  0.5    0
+IT      DRAIN       0   0.5   6      6     0     0
+RB      RB
+RB      STORAGE     48  0.75  0.5    0
+RB      DRAIN       1   0.5   0      0
+BC      BC
+BC      SURFACE     6   0.25  0.1    1.0   5
+BC      SOIL        12  0.5   0.2    0.1   0.5   10.0  3.5
+BC      STORAGE     12  0.75  0.5    0
+BC      DRAIN       0   0.5   6      6     0     0
+BC      REMOVALS    TSS 50
+PP      PP
+PP      SURFACE     6   0.25  0.1    1.0   5
+PP      PAVEMENT    6   0.15  0      100   0
+PP      SOIL        12  0.5   0.2    0.1   0.5   10.0  3.5
+PP      STORAGE     12  0.75  0.5    0
+PP      DRAIN       0   0.5   6      6
+RD      RD
+RD      SURFACE     6   0.25  0.1    1.0   5
+RD      DRAIN       0   0.5   6      6     0     0
+
+[LID_USAGE]
+;;Subcatchment  LID Process  Number  Area  Width  InitSat  FromImp  ToPerv  RptFile  DrainTo  FromPerv
+withLID         BC           10      50    10     0        10       0       "lid-detail.txt" 2        0
+withLID         GR           10      50    10     0        10       1       *        *        0
+withLID         IT           10      50    10     0        10       1       *        *        0
+withLID         PP           10      50    10     0        10       1       *        *        0
+withLID         RB           10      12    10     0        10       1       *        *        0
+withLID         RD           10      50    10     0        10       1       *        *        0
+withLID         RG           10      50    10     0        10       1       *        *        0
+withLID         SWALE        10      50    10     0        10       1       *        *        0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+2        0          FREE              NO
+
+[TIMESERIES]
+;;Name    Date  Time  Value
+Rainfall        0:00  0.037
+Rainfall        0:15  0.111
+Rainfall        0:30  0.185
+Rainfall        0:45  0.259
+Rainfall        1:00  0.333
+Rainfall        1:15  0.407
+Rainfall        1:30  0.481
+Rainfall        1:45  0.556
+Rainfall        2:00  0.630
+Rainfall        2:15  0.644
+Rainfall        2:30  0.600
+Rainfall        2:45  0.556
+Rainfall        3:00  0.511
+Rainfall        3:15  0.467
+Rainfall        3:30  0.422
+Rainfall        3:45  0.378
+Rainfall        4:00  0.333
+Rainfall        4:15  0.289
+Rainfall        4:30  0.244
+Rainfall        4:45  0.200
+Rainfall        5:00  0.156
+Rainfall        5:15  0.111
+Rainfall        5:30  0.067
+Rainfall        5:45  0.022
+Rainfall        6:00  0
+
+[REPORT]
+INPUT          YES
+CONTROLS       NO
+SUBCATCHMENTS  ALL
+NODES          ALL
+LINKS          NONE

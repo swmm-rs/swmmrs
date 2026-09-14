@@ -1,0 +1,61 @@
+[TITLE]
+Rain gage and subcatchment public behavior coverage.
+
+[OPTIONS]
+FLOW_UNITS           CFS
+INFILTRATION         HORTON
+FLOW_ROUTING         KINWAVE
+LINK_OFFSETS         DEPTH
+START_DATE           01/01/2020
+START_TIME           00:00:00
+REPORT_START_DATE    01/01/2020
+REPORT_START_TIME    00:00:00
+END_DATE             01/01/2020
+END_TIME             00:20:00
+REPORT_STEP          00:01:00
+WET_STEP             00:01:00
+DRY_STEP             00:01:00
+ROUTING_STEP         00:00:30
+
+[RAINGAGES]
+Gage-A INTENSITY 0:01 1.0 TIMESERIES RainSeries
+Gage-B INTENSITY 0:01 1.0 TIMESERIES RainSeries
+
+[SUBCATCHMENTS]
+Sub-Node   Gage-A J1       1.0 25 100 1.0 0
+Sub-To-Sub Gage-A Sub-Node 0.5 50  75 2.0 5
+Sub-Self   Gage-B Sub-Self 0.2  0  50 0.5 0
+
+[SUBAREAS]
+Sub-Node   0.01 0.1 0.05 0.05 25 OUTLET
+Sub-To-Sub 0.01 0.1 0.05 0.05 25 OUTLET
+Sub-Self   0.01 0.1 0.05 0.05  0 OUTLET
+
+[INFILTRATION]
+Sub-Node   3.0 0.5 4.0 7.0 0
+Sub-To-Sub 3.0 0.5 4.0 7.0 0
+Sub-Self   3.0 0.5 4.0 7.0 0
+
+[JUNCTIONS]
+J1 10 5 0 0 0
+
+[OUTFALLS]
+Out 0 FREE NO
+
+[CONDUITS]
+Pipe J1 Out 100 0.013 0 0 0 0
+
+[XSECTIONS]
+Pipe CIRCULAR 2 0 0 0 1
+
+[TIMESERIES]
+RainSeries 00:00 0
+RainSeries 00:01 0.1
+RainSeries 00:20 0
+
+[REPORT]
+INPUT NO
+CONTROLS NO
+SUBCATCHMENTS ALL
+NODES ALL
+LINKS ALL

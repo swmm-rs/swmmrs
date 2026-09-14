@@ -1,0 +1,104 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+On-sag slotted and custom street-inlet capture.
+
+[OPTIONS]
+ROUTING_STEP         00:00:15
+ALLOW_PONDING        NO
+FLOW_UNITS           CFS
+FLOW_ROUTING         DYNWAVE
+DRY_STEP             00:05:00
+START_DATE           01/01/2020
+VARIABLE_STEP        0.75
+MINIMUM_STEP         0.5
+END_DATE             01/01/2020
+THREADS              1
+START_TIME           00:00:00
+REPORT_START_DATE    01/01/2020
+WET_STEP             00:01:00
+REPORT_STEP          00:01:00
+END_TIME             02:00:00
+REPORT_START_TIME    00:00:00
+INFILTRATION         HORTON
+LINK_OFFSETS         DEPTH
+
+[JUNCTIONS]
+;;Name    Elevation  MaxDepth  InitDepth  SurDepth  Apond
+SLOT_CAP  95         5         0          0         0
+CUST_CAP  95         5         0          0         0
+CUST_SAG  99         1         0          0         0
+CUST_UP   100        5         0          0         0
+SLOT_SAG  99         1         0          0         0
+GRATE_SAG 99         1         0          0         0
+CURB_CAP  95         5         0          0         0
+SLOT_UP   100        5         0          0         0
+CURB_SAG  99         1         0          0         0
+CURB_UP   100        5         0          0         0
+GRATE_UP  100        5         0          0         0
+GRATE_CAP 95         5         0          0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT     0          FREE              NO
+
+[CONDUITS]
+;;Name   From Node  To Node   Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+C_SLOT   SLOT_UP    SLOT_SAG  100     0.016      0         0          0         0
+C_CUSTOM CUST_UP    CUST_SAG  100     0.016      0         0          0         0
+C_CURB   CURB_UP    CURB_SAG  100     0.016      0         0          0         0
+C_GRATE  GRATE_UP   GRATE_SAG 100     0.016      0         0          0         0
+
+[XSECTIONS]
+;;Link    Shape   Geom1   Geom2  Geom3  Geom4  Barrels
+C_CUSTOM  STREET  Street1 0      0      0      1
+C_GRATE   STREET  Street1 0      0      0      1
+C_SLOT    STREET  Street1 0      0      0      1
+C_CURB    STREET  Street1 0      0      0      1
+
+[STREETS]
+;;Name   Tcrown  Hcurb  Sroad  nRoad  Hdep  Wdep  Sides  Wback  Sback  nBack
+Street1  20      0.5    0.02   0.016  0      0     2      0      0      0
+
+[INLETS]
+;;Name       Type     Parameters
+SlotInlet    SLOTTED  4.0  0.5
+CustomInlet  CUSTOM   CaptureCurve
+GrateInlet   GRATE    2.0  2.0  P_BAR-50
+CurbInlet    CURB     4.0  0.1  HORIZONTAL
+
+[INLET_USAGE]
+;;Conduit  Inlet_Type  Inlet_Node  #Inlets  %Clogged  MaxFlow  aLocal  wLocal  Placement
+C_CUSTOM   CustomInlet CUST_CAP    1         0         5        0       0       ON_SAG
+C_GRATE    GrateInlet  GRATE_CAP   1         0         6        0       0       ON_SAG
+C_CURB     CurbInlet   CURB_CAP    1         0         6        0       0       ON_SAG
+C_SLOT     SlotInlet   SLOT_CAP    2         10        6        0.1     2.0     ON_SAG
+
+[INFLOWS]
+;;Node    Constituent  Time Series  Type  Mfactor  Sfactor  Baseline
+GRATE_UP  FLOW         StreetFlow   FLOW  1        1        0
+CUST_UP   FLOW         StreetFlow   FLOW  1        1        0
+SLOT_UP   FLOW         StreetFlow   FLOW  1        1        0
+CURB_UP   FLOW         StreetFlow   FLOW  1        1        0
+
+[TIMESERIES]
+;;Name       Date  Time   Value
+StreetFlow         00:00  0
+StreetFlow         00:15  1
+StreetFlow         00:30  4
+StreetFlow         01:00  8
+StreetFlow         01:30  2
+StreetFlow         02:00  0
+
+[CURVES]
+;;Name         Type       X-Value  Y-Value
+CaptureCurve   DIVERSION  0        0
+CaptureCurve              1        0.5
+CaptureCurve              4        2.5
+CaptureCurve              8        5
+
+[REPORT]
+INPUT          YES
+CONTROLS       NO
+SUBCATCHMENTS  NONE
+NODES          ALL
+LINKS          ALL

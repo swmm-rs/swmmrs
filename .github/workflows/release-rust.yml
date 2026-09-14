@@ -1,0 +1,463 @@
+name: Release Rust
+
+on:
+    workflow_dispatch:
+        inputs:
+            sha:
+                description: Exact 40-character commit SHA to release
+                required: true
+                type: string
+            dry_run:
+                description: Build CLI artifacts without creating a tag or release
+                required: true
+                default: false
+                type: boolean
+
+permissions:
+    contents: read
+
+concurrency:
+    group: release-rust
+    cancel-in-progress: false
+
+jobs:
+    plan:
+        name: Validate Rust release
+        runs-on: ubuntu-24.04
+        outputs:
+            source_sha: ${{ steps.plan.outputs.source_sha }}
+            tag: ${{ steps.plan.outputs.tag }}
+            version: ${{ steps.plan.outputs.version }}
+        steps:
+            - name: Check out selected commit
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  ref: ${{ inputs.sha }}
+                  persist-credentials: false
+
+            - name: Derive version and reject release conflicts
+              id: plan
+              shell: bash
+              env:
+                  API_URL: ${{ github.api_url }}
+                  DRY_RUN: ${{ inputs.dry_run }}
+                  GITHUB_TOKEN: ${{ github.token }}
+                  INPUT_SHA: ${{ inputs.sha }}
+                  REPOSITORY: ${{ github.repository }}
+              run: |
+                  set -euo pipefail
+                  SOURCE_SHA=$(git rev-parse HEAD)
+                  export SOURCE_SHA
+                  python - <<'PY'
+                  import json
+                  import os
+                  import pathlib
+                  import re
+                  import tomllib
+                  import urllib.error
+                  import urllib.request
+
+                  requested_sha = os.environ["INPUT_SHA"]
+                  if re.fullmatch(r"[0-9a-fA-F]{40}", requested_sha) is None:
+                      raise SystemExit("sha must be an exact 40-character commit SHA")
+
+                  source_sha = os.environ["SOURCE_SHA"]
+                  if source_sha.lower() != requested_sha.lower():
+                      raise SystemExit(f"requested {requested_sha}, checked out {source_sha}")
+
+                  def package_version(path: str) -> str:
+                      with pathlib.Path(path).open("rb") as file:
+                          return tomllib.load(file)["package"]["version"]
+
+                  with pathlib.Path("Cargo.toml").open("rb") as file:
+                      workspace_output_version = tomllib.load(file)["workspace"]["dependencies"]["swmm-output"]["version"]
+
+                  versions = {
+                      "CLI crate": package_version("crates/run/Cargo.toml"),
+                      "output crate": package_version("crates/output/Cargo.toml"),
+                      "workspace output requirement": workspace_output_version,
+                  }
+                  version = versions["CLI crate"]
+                  if re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version) is None:
+                      raise SystemExit(f"Rust release version must be stable SemVer; found {version}")
+                  mismatches = {name: found for name, found in versions.items() if found != version}
+                  if mismatches:
+                      details = ", ".join(f"{name}={found}" for name, found in mismatches.items())
+                      raise SystemExit(f"Rust product versions do not agree: {details}")
+
+                  tag = f"rs-{version}"
+
+                  def require_missing(url: str, label: str) -> None:
+                      request = urllib.request.Request(
+                          url,
+                          headers={
+                              "Accept": "application/vnd.github+json",
+                              "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                              "User-Agent": "swmmrs-release",
+                              "X-GitHub-Api-Version": "2022-11-28",
+                          },
+                      )
+                      try:
+                          with urllib.request.urlopen(request):
+                              pass
+                      except urllib.error.HTTPError as error:
+                          if error.code == 404:
+                              return
+                          raise
+                      raise SystemExit(f"{label} already exists")
+
+                  if os.environ["DRY_RUN"] != "true":
+                      api = os.environ["API_URL"]
+                      repository = os.environ["REPOSITORY"]
+                      require_missing(f"{api}/repos/{repository}/git/ref/tags/{tag}", f"tag {tag}")
+                      require_missing(f"{api}/repos/{repository}/releases/tags/{tag}", f"release {tag}")
+
+                  output = pathlib.Path(os.environ["GITHUB_OUTPUT"])
+                  with output.open("a", encoding="utf-8") as file:
+                      file.write(f"source_sha={source_sha}\n")
+                      file.write(f"tag={tag}\n")
+                      file.write(f"version={version}\n")
+                  print(json.dumps({"source_sha": source_sha, "tag": tag, "version": version}))
+                  PY
+
+    build-cli:
+        name: CLI (${{ matrix.target }})
+        needs: plan
+        environment:
+            name: maintainer-approved
+        permissions:
+            contents: read
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - runner: ubuntu-22.04
+                      target: x86_64-unknown-linux-gnu
+                      target_cpu: x86-64
+                    - runner: ubuntu-22.04-arm
+                      target: aarch64-unknown-linux-gnu
+                      target_cpu: generic
+                    - runner: macos-15-intel
+                      target: x86_64-apple-darwin
+                      target_cpu: x86-64
+                      macos_deployment_target: "10.13"
+                    - runner: macos-15
+                      target: aarch64-apple-darwin
+                      target_cpu: generic
+                      macos_deployment_target: "11.0"
+                    - runner: windows-2022
+                      target: x86_64-pc-windows-msvc
+                      target_cpu: x86-64
+                    - runner: windows-11-arm
+                      target: aarch64-pc-windows-msvc
+                      target_cpu: generic
+        runs-on: ${{ matrix.runner }}
+        env:
+            CARGO_INCREMENTAL: "0"
+            MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macos_deployment_target || '' }}
+            RUSTFLAGS: -C target-cpu=${{ matrix.target_cpu }}
+        steps:
+            - name: Generate GitHub App token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+              with:
+                  client-id: ${{ secrets.APP_CLIENT_ID }}
+                  private-key: ${{ secrets.APP_PRIVATE_KEY }}
+                  owner: ${{ github.repository_owner }}
+                  repositories: |
+                      swmmrs
+                      swmmrs-solver
+                      swmmrs-parallel
+                  permission-contents: read
+
+            - name: Check out source and private dependencies
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  ref: ${{ needs.plan.outputs.source_sha }}
+                  token: ${{ steps.app-token.outputs.token }}
+                  submodules: recursive
+                  persist-credentials: false
+
+            - name: Install pinned Rust toolchain
+              uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+              with:
+                  toolchain: "1.97.1"
+
+            - name: Build portable release binary
+              shell: bash
+              run: cargo build --release --locked -p runswmmrs --bin runswmmrs
+
+            - name: Smoke-test release binary
+              shell: bash
+              run: target/release/runswmmrs${{ runner.os == 'Windows' && '.exe' || '' }} --version
+
+            - name: Package Unix release archive
+              if: runner.os != 'Windows'
+              shell: bash
+              env:
+                  TARGET: ${{ matrix.target }}
+              run: |
+                  set -euo pipefail
+                  asset="runswmmrs-${TARGET}.tar.gz"
+                  staging="$RUNNER_TEMP/runswmmrs-${TARGET}"
+                  mkdir -p "$staging" dist
+                  cp target/release/runswmmrs "$staging/runswmmrs"
+                  cp LICENSE THIRD_PARTY_NOTICES.md "$staging/"
+                  cp -R LICENSES "$staging/LICENSES"
+                  mkdir -p "$staging/thirdparty"
+                  cp -R thirdparty/licenses "$staging/thirdparty/licenses"
+                  tar -C "$staging" -czf "dist/$asset" .
+                  if command -v sha256sum >/dev/null 2>&1; then
+                    (cd dist && sha256sum "$asset" > "$asset.sha256")
+                  else
+                    (cd dist && shasum -a 256 "$asset" > "$asset.sha256")
+                  fi
+
+            - name: Package Windows release archive
+              if: runner.os == 'Windows'
+              shell: pwsh
+              env:
+                  TARGET: ${{ matrix.target }}
+              run: |
+                  $asset = "runswmmrs-$env:TARGET.zip"
+                  $staging = Join-Path $env:RUNNER_TEMP "runswmmrs-$env:TARGET"
+                  $directories = @($staging, "$staging/LICENSES", "$staging/thirdparty/licenses", "dist")
+                  New-Item -ItemType Directory -Path $directories -Force | Out-Null
+                  Copy-Item "target/release/runswmmrs.exe" "$staging/runswmmrs.exe"
+                  Copy-Item "LICENSE", "THIRD_PARTY_NOTICES.md" $staging
+                  Copy-Item "LICENSES/*" "$staging/LICENSES/" -Recurse
+                  Copy-Item "thirdparty/licenses/*" "$staging/thirdparty/licenses/" -Recurse
+                  Compress-Archive -Path "$staging/*" -DestinationPath "dist/$asset"
+                  $hash = (Get-FileHash "dist/$asset" -Algorithm SHA256).Hash.ToLowerInvariant()
+                  "$hash  $asset" | Set-Content "dist/$asset.sha256" -Encoding ascii
+
+            - name: Upload packaged CLI assets
+              uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+              with:
+                  name: cli-${{ matrix.target }}
+                  path: dist/*
+                  if-no-files-found: error
+                  retention-days: 7
+                  overwrite: true
+
+    validate-cli:
+        name: Validate Rust CLI asset set
+        needs:
+            - plan
+            - build-cli
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Check out release metadata
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  ref: ${{ needs.plan.outputs.source_sha }}
+                  persist-credentials: false
+
+            - name: Download CLI assets
+              uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+              with:
+                  pattern: cli-*
+                  path: dist
+                  merge-multiple: true
+
+            - name: Stage common license and notice files
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  cp LICENSE dist/LICENSE
+                  cp LICENSES/SWMMRS-BINARY-RUNTIME.txt dist/SWMMRS-BINARY-RUNTIME.txt
+                  cp THIRD_PARTY_NOTICES.md dist/THIRD_PARTY_NOTICES.md
+
+            - name: Validate complete CLI asset set
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  python - <<'PY'
+                  import pathlib
+                  import tarfile
+                  import zipfile
+
+                  expected_archives = {
+                      "runswmmrs-x86_64-unknown-linux-gnu.tar.gz",
+                      "runswmmrs-aarch64-unknown-linux-gnu.tar.gz",
+                      "runswmmrs-x86_64-apple-darwin.tar.gz",
+                      "runswmmrs-aarch64-apple-darwin.tar.gz",
+                      "runswmmrs-x86_64-pc-windows-msvc.zip",
+                      "runswmmrs-aarch64-pc-windows-msvc.zip",
+                  }
+                  expected_files = (
+                      expected_archives
+                      | {f"{name}.sha256" for name in expected_archives}
+                      | {"LICENSE", "SWMMRS-BINARY-RUNTIME.txt", "THIRD_PARTY_NOTICES.md"}
+                  )
+                  found_files = {path.name for path in pathlib.Path("dist").iterdir() if path.is_file()}
+                  if found_files != expected_files:
+                      missing = sorted(expected_files - found_files)
+                      extra = sorted(found_files - expected_files)
+                      raise SystemExit(f"CLI asset mismatch; missing={missing}, extra={extra}")
+
+                  expected_licenses = {"LICENSE", "THIRD_PARTY_NOTICES.md"}
+                  expected_licenses.update(
+                      f"LICENSES/{path.name}" for path in pathlib.Path("LICENSES").iterdir() if path.is_file()
+                  )
+                  expected_licenses.update(
+                      f"thirdparty/licenses/{path.name}"
+                      for path in pathlib.Path("thirdparty/licenses").iterdir()
+                      if path.is_file()
+                  )
+                  dist = pathlib.Path("dist")
+                  for name in expected_archives:
+                      archive = dist / name
+                      if name.endswith(".tar.gz"):
+                          with tarfile.open(archive, "r:gz") as file:
+                              members = {item.name.removeprefix("./") for item in file if item.isfile()}
+                          expected_members = {"runswmmrs"} | expected_licenses
+                      else:
+                          with zipfile.ZipFile(archive) as file:
+                              members = {item.filename for item in file.infolist() if not item.is_dir()}
+                          expected_members = {"runswmmrs.exe"} | expected_licenses
+                      if members != expected_members:
+                          raise SystemExit(f"{name} has unexpected members: {sorted(members)}")
+                  for name in sorted(found_files):
+                      print(name)
+                  PY
+                  (cd dist && sha256sum --check --strict *.sha256)
+
+            - name: Upload validated Rust release bundle
+              uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+              with:
+                  name: rust-release-bundle
+                  path: dist/*
+                  if-no-files-found: error
+                  retention-days: 7
+                  overwrite: true
+
+    publish-github:
+        name: Publish Rust GitHub release
+        needs:
+            - plan
+            - validate-cli
+        if: inputs.dry_run == false
+        runs-on: ubuntu-24.04
+        environment:
+            name: github-release
+            url: https://github.com/${{ github.repository }}/releases/tag/${{ needs.plan.outputs.tag }}
+        permissions:
+            contents: write
+        steps:
+            - name: Download validated Rust release bundle
+              uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+              with:
+                  name: rust-release-bundle
+                  path: dist
+
+            - name: Create release, upload assets, and publish
+              shell: bash
+              env:
+                  API_URL: ${{ github.api_url }}
+                  GITHUB_TOKEN: ${{ github.token }}
+                  REPOSITORY: ${{ github.repository }}
+                  SOURCE_SHA: ${{ needs.plan.outputs.source_sha }}
+                  TAG: ${{ needs.plan.outputs.tag }}
+                  VERSION: ${{ needs.plan.outputs.version }}
+              run: |
+                  set -euo pipefail
+                  python - <<'PY' > "$RUNNER_TEMP/release.json"
+                  import json
+                  import os
+                  import urllib.request
+
+                  payload = json.dumps({
+                      "tag_name": os.environ["TAG"],
+                      "target_commitish": os.environ["SOURCE_SHA"],
+                      "name": f"Rust swmmrs {os.environ['VERSION']}",
+                      "draft": True,
+                      "prerelease": False,
+                      "generate_release_notes": True,
+                      "make_latest": "true",
+                  }).encode()
+                  request = urllib.request.Request(
+                      f"{os.environ['API_URL']}/repos/{os.environ['REPOSITORY']}/releases",
+                      data=payload,
+                      method="POST",
+                      headers={
+                          "Accept": "application/vnd.github+json",
+                          "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                          "Content-Type": "application/json",
+                          "User-Agent": "swmmrs-release",
+                          "X-GitHub-Api-Version": "2022-11-28",
+                      },
+                  )
+                  with urllib.request.urlopen(request) as response:
+                      print(json.dumps(json.load(response)))
+                  PY
+
+                  python - <<'PY'
+                  import json
+                  import os
+                  import urllib.request
+
+                  headers = {
+                      "Accept": "application/vnd.github+json",
+                      "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                      "User-Agent": "swmmrs-release",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                  }
+                  base = f"{os.environ['API_URL']}/repos/{os.environ['REPOSITORY']}"
+                  request = urllib.request.Request(
+                      f"{base}/git/ref/tags/{os.environ['TAG']}", headers=headers
+                  )
+                  with urllib.request.urlopen(request) as response:
+                      target = json.load(response)["object"]
+                  for _ in range(4):
+                      if target["type"] == "commit":
+                          break
+                      if target["type"] != "tag":
+                          raise SystemExit(f"release tag points to unsupported {target['type']}")
+                      request = urllib.request.Request(f"{base}/git/tags/{target['sha']}", headers=headers)
+                      with urllib.request.urlopen(request) as response:
+                          target = json.load(response)["object"]
+                  if target["type"] != "commit" or target["sha"] != os.environ["SOURCE_SHA"]:
+                      raise SystemExit(
+                          f"release tag moved: expected {os.environ['SOURCE_SHA']}, found {target}"
+                      )
+                  PY
+
+                  RELEASE_ID=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["id"])' "$RUNNER_TEMP/release.json")
+                  UPLOAD_URL=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["upload_url"].split("{")[0])' "$RUNNER_TEMP/release.json")
+
+                  for file in dist/*; do
+                    name=$(basename "$file")
+                    encoded=$(python -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$name")
+                    curl --fail-with-body --silent --show-error \
+                      --request POST \
+                      --header "Accept: application/vnd.github+json" \
+                      --header "Authorization: Bearer $GITHUB_TOKEN" \
+                      --header "Content-Type: application/octet-stream" \
+                      --header "X-GitHub-Api-Version: 2022-11-28" \
+                      --data-binary "@$file" \
+                      "$UPLOAD_URL?name=$encoded" >/dev/null
+                  done
+
+                  export RELEASE_ID
+                  python - <<'PY'
+                  import json
+                  import os
+                  import urllib.request
+
+                  request = urllib.request.Request(
+                      f"{os.environ['API_URL']}/repos/{os.environ['REPOSITORY']}/releases/{os.environ['RELEASE_ID']}",
+                      data=json.dumps({"draft": False, "make_latest": "true"}).encode(),
+                      method="PATCH",
+                      headers={
+                          "Accept": "application/vnd.github+json",
+                          "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                          "Content-Type": "application/json",
+                          "User-Agent": "swmmrs-release",
+                          "X-GitHub-Api-Version": "2022-11-28",
+                      },
+                  )
+                  with urllib.request.urlopen(request) as response:
+                      release = json.load(response)
+                  print(release["html_url"])
+                  PY

@@ -1,0 +1,250 @@
+name: Release JavaScript
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Exact 40-character commit SHA to release
+        required: true
+        type: string
+      dry_run:
+        description: Build and test the package without creating a tag or publishing
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-js
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and test npm package
+    runs-on: ubuntu-24.04
+    outputs:
+      source_sha: ${{ steps.plan.outputs.source_sha }}
+      tag: ${{ steps.plan.outputs.tag }}
+      version: ${{ steps.plan.outputs.version }}
+    environment:
+      name: maintainer-approved
+    defaults:
+      run:
+        working-directory: js
+    steps:
+      - name: Validate requested commit
+        working-directory: .
+        env:
+          INPUT_SHA: ${{ inputs.sha }}
+        run: |
+          if [[ ! "$INPUT_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo "sha must be an exact 40-character commit SHA" >&2
+            exit 1
+          fi
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            swmmrs
+            swmmrs-solver
+            swmmrs-parallel
+          permission-contents: read
+
+      - name: Check out source and private dependencies
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.sha }}
+          token: ${{ steps.app-token.outputs.token }}
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Verify checked-out commit
+        env:
+          INPUT_SHA: ${{ inputs.sha }}
+        run: test "$(git rev-parse HEAD)" = "${INPUT_SHA,,}"
+
+      - name: Install Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: js/package-lock.json
+
+      - name: Derive version and reject release conflicts
+        id: plan
+        env:
+          API_URL: ${{ github.api_url }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          GITHUB_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          node --input-type=module <<'JS'
+          import { appendFileSync, readFileSync } from "node:fs";
+          import { execFileSync } from "node:child_process";
+
+          const { name, version } = JSON.parse(readFileSync("package.json", "utf8"));
+          if (typeof version !== "string" || !/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(version)) {
+            throw new Error(`JavaScript release version must be stable SemVer; found ${version}`);
+          }
+          const sourceSha = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+          const tag = `js-${version}`;
+          if (process.env.DRY_RUN !== "true") {
+            const base = `${process.env.API_URL}/repos/${process.env.REPOSITORY}`;
+            const headers = {
+              Accept: "application/vnd.github+json",
+              Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+              "X-GitHub-Api-Version": "2022-11-28",
+            };
+            for (const [url, options, label] of [
+              [`${base}/git/ref/tags/${tag}`, { headers }, `tag ${tag}`],
+              [`${base}/releases/tags/${tag}`, { headers }, `release ${tag}`],
+              [`https://registry.npmjs.org/${encodeURIComponent(name)}/${version}`, {}, `npm ${name} ${version}`],
+            ]) {
+              const response = await fetch(url, options);
+              if (response.ok) throw new Error(`Release conflict already exists: ${label}`);
+              if (response.status !== 404) throw new Error(`Cannot check ${label}: HTTP ${response.status}`);
+            }
+          }
+          appendFileSync(process.env.GITHUB_OUTPUT, `source_sha=${sourceSha}\ntag=${tag}\nversion=${version}\n`);
+          console.log(JSON.stringify({ source_sha: sourceSha, tag, version }));
+          JS
+
+      - name: Install Rust toolchain from js/rust-toolchain.toml
+        run: rustup show active-toolchain
+
+      - name: Install wasm-pack
+        run: cargo +stable install wasm-pack --version 0.15.0 --locked
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Build threaded and serial WASM and TypeScript
+        run: |
+          npm run build:wasm -- --locked
+          npm run build:ts
+
+      - name: Check types, documentation, and package contents
+        run: |
+          npx tsc -p tests/typing/tsconfig.json
+          npm run test:docs
+          npm run test:package
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Test browser package
+        run: npx playwright test
+
+      - name: Pack release tarball
+        run: |
+          mkdir -p "$RUNNER_TEMP/npm-package"
+          npm pack --pack-destination "$RUNNER_TEMP/npm-package"
+
+      - name: Upload release tarball
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/npm-package/*.tgz
+          if-no-files-found: error
+
+  prepare-github-release:
+    name: Prepare JavaScript GitHub release
+    needs: build
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-release
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ needs.build.outputs.tag }}
+    permissions:
+      contents: write
+    outputs:
+      release_id: ${{ steps.release.outputs.release_id }}
+    steps:
+      - name: Create tag and draft release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          SOURCE_SHA: ${{ needs.build.outputs.source_sha }}
+          TAG: ${{ needs.build.outputs.tag }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          set -euo pipefail
+          gh api --method POST "repos/$REPOSITORY/git/refs" \
+            -f ref="refs/tags/$TAG" -f sha="$SOURCE_SHA"
+          RELEASE_ID=$(gh api --method POST "repos/$REPOSITORY/releases" \
+            -f tag_name="$TAG" -f target_commitish="$SOURCE_SHA" \
+            -f name="JavaScript swmmrs $VERSION" \
+            -F draft=true -F prerelease=false -F generate_release_notes=true \
+            -f make_latest=false --jq '.id')
+          echo "release_id=$RELEASE_ID" >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: Publish to npm
+    needs:
+      - build
+      - prepare-github-release
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-24.04
+    environment:
+      name: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download tested release tarball
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: npm-package
+          path: npm-package
+
+      - name: Install Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      # Configure @swmmrs/swmmrs's npm trusted publisher for this repository,
+      # workflow filename release-js.yml, and GitHub environment npm.
+      # Enable direct npm publish in the trusted publisher's allowed actions.
+      - name: Publish using npm trusted publishing
+        run: npm publish npm-package/*.tgz --access public --ignore-scripts
+
+  publish-github-release:
+    name: Publish JavaScript GitHub release
+    needs:
+      - build
+      - prepare-github-release
+      - publish
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-release
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ needs.build.outputs.tag }}
+    permissions:
+      contents: write
+    steps:
+      - name: Verify tag and publish draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          RELEASE_ID: ${{ needs.prepare-github-release.outputs.release_id }}
+          SOURCE_SHA: ${{ needs.build.outputs.source_sha }}
+          TAG: ${{ needs.build.outputs.tag }}
+        run: |
+          set -euo pipefail
+          TARGET=$(gh api "repos/$REPOSITORY/git/ref/tags/$TAG" --jq '.object | .type + ":" + .sha')
+          if [[ "$TARGET" != "commit:$SOURCE_SHA" ]]; then
+            echo "Release tag moved: expected commit:$SOURCE_SHA, found $TARGET" >&2
+            exit 1
+          fi
+          gh api --method PATCH "repos/$REPOSITORY/releases/$RELEASE_ID" \
+            -F draft=false -f make_latest=false --jq '.html_url'

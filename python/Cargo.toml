@@ -1,0 +1,35 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "swmmrs-python"
+version = "0.3.0"
+description = "Private native extension for the swmmrs Python package"
+edition = "2024"
+rust-version = "1.97.1"
+homepage = "https://github.com/swmm-rs/swmmrs"
+repository = "https://github.com/swmm-rs/swmmrs"
+authors = ["karosc"]
+license = "Apache-2.0"
+exclude = [".python-version", "tests/**", "uv.lock"]
+
+[lib]
+name = "_swmmrs"
+crate-type = ["cdylib"]
+
+[features]
+test-support = ["swmmrs/test-support"]
+
+[dependencies]
+swmmrs = { path = "../crates/solver" }
+swmm-output = { path = "../crates/output" }
+pyo3 = { version = "0.29", features = ["abi3-py311", "abi3t-py315", "multiple-pymethods"] }
+
+[profile.release]
+opt-level = 3
+panic = "unwind"
+lto = "fat"
+codegen-units = 1
+debug = false
+strip = "debuginfo"
+incremental = false

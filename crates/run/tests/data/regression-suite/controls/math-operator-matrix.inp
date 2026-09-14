@@ -1,0 +1,104 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Runtime matrix for every mathematical control expression operator and function.
+
+[OPTIONS]
+ROUTING_STEP         00:00:10
+START_DATE           01/01/2020
+END_DATE             01/01/2020
+REPORT_START_TIME    00:00:00
+FLOW_ROUTING         DYNWAVE
+DRY_STEP             00:01:00
+WET_STEP             00:01:00
+DRY_DAYS             0
+RULE_STEP            00:01:00
+FLOW_UNITS           CFS
+START_TIME           00:00:00
+END_TIME             04:00:00
+VARIABLE_STEP        0
+REPORT_STEP          00:05:00
+LINK_OFFSETS         DEPTH
+THREADS              1
+REPORT_START_DATE    01/01/2020
+INFILTRATION         HORTON
+
+[STORAGE]
+;;Name  Elev.  MaxDepth  InitDepth  Shape       A1     A2  A0  SurDepth  Fevap
+TANK    0       5         0.8        FUNCTIONAL  10000  0   0   0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT1    0          FREE              NO
+OUT3    0          FREE              NO
+OUT2    0          FREE              NO
+
+[ORIFICES]
+;;Name     From Node  To Node  Type  Offset  Qcoeff  Gated  CloseTime
+O_SPECIAL  TANK       OUT3     SIDE  0       0.65    NO     0
+O_TRIG     TANK       OUT2     SIDE  0       0.65    NO     0
+O_ARITH    TANK       OUT1     SIDE  0       0.65    NO     0
+
+[XSECTIONS]
+;;Link     Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+O_ARITH    CIRCULAR  0.75   0      0      0      1
+O_SPECIAL  CIRCULAR  0.75   0      0      0      1
+O_TRIG     CIRCULAR  0.75   0      0      0      1
+
+[INFLOWS]
+;;Node  Constituent  Time Series  Type  Mfactor  Sfactor  Baseline
+TANK    FLOW         Inflow       FLOW  1.0      1.0      0
+
+[CONTROLS]
+VARIABLE DEPTH_STATE = NODE TANK DEPTH
+VARIABLE INFLOW_STATE = NODE TANK INFLOW
+
+EXPRESSION ARITH_MATRIX = DEPTH_STATE + INFLOW_STATE - DEPTH_STATE * INFLOW_STATE / (DEPTH_STATE + 1.0) + (-DEPTH_STATE / 2.0) + (DEPTH_STATE + 1.0) ^ 0.5
+EXPRESSION TRIG_MATRIX = COS(DEPTH_STATE / 4.0) + 2.0 * SIN(DEPTH_STATE / 3.0) + 3.0 * TAN(DEPTH_STATE / 5.0) + 0.5 * COT(DEPTH_STATE / 2.0 + 0.5) + 0.25 * ABS(-DEPTH_STATE) + 0.5 * SGN(DEPTH_STATE - 0.9)
+EXPRESSION SPECIAL_A = SQRT(DEPTH_STATE + 1.0) + 0.5 * LOG(DEPTH_STATE + 1.0) + 0.25 * EXP(DEPTH_STATE / 10.0) + 0.5 * ASIN(DEPTH_STATE / (DEPTH_STATE + 2.0)) + 0.75 * ACOS(DEPTH_STATE / (DEPTH_STATE + 3.0)) + 0.25 * ATAN(DEPTH_STATE)
+EXPRESSION SPECIAL_B = 0.5 * ACOT(DEPTH_STATE) + 0.25 * SINH(DEPTH_STATE / 5.0) + 0.5 * COSH(DEPTH_STATE / 5.0) + 0.75 * TANH(DEPTH_STATE / 5.0)
+EXPRESSION SPECIAL_C = 0.25 * COTH(DEPTH_STATE / 5.0 + 0.5) + 0.5 * LOG10(DEPTH_STATE + 1.0) + STEP(DEPTH_STATE - 1.0)
+
+RULE ARITHMETIC_OPERATOR_RESPONSE
+IF ARITH_MATRIX > 3.0
+THEN ORIFICE O_ARITH SETTING = 1.0
+ELSE ORIFICE O_ARITH SETTING = 0.2
+PRIORITY 1
+
+RULE TRIG_FUNCTION_RESPONSE
+IF TRIG_MATRIX > 3.0
+THEN ORIFICE O_TRIG SETTING = 1.0
+ELSE ORIFICE O_TRIG SETTING = 0.2
+PRIORITY 1
+
+RULE SPECIAL_FUNCTION_RESPONSE_A
+IF SPECIAL_A > 3.0
+THEN ORIFICE O_SPECIAL SETTING = 1.0
+ELSE ORIFICE O_SPECIAL SETTING = 0.2
+PRIORITY 1
+
+RULE SPECIAL_FUNCTION_RESPONSE_B
+IF SPECIAL_B > 1.5
+THEN ORIFICE O_SPECIAL SETTING = 1.0
+ELSE ORIFICE O_SPECIAL SETTING = 0.2
+PRIORITY 2
+
+RULE SPECIAL_FUNCTION_RESPONSE_C
+IF SPECIAL_C > 1.0
+THEN ORIFICE O_SPECIAL SETTING = 1.0
+ELSE ORIFICE O_SPECIAL SETTING = 0.2
+PRIORITY 3
+
+[TIMESERIES]
+;;Name  Date  Time   Value
+Inflow        00:00  0.5
+Inflow        00:30  8.0
+Inflow        02:00  8.0
+Inflow        02:30  0.5
+Inflow        04:00  0.5
+
+[REPORT]
+INPUT          YES
+CONTROLS       YES
+SUBCATCHMENTS  NONE
+NODES          ALL
+LINKS          ALL

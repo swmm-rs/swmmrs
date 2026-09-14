@@ -1,0 +1,32 @@
+swmmrs Binary Runtime License, Version 1.0
+
+Copyright 2026 Constantine Karos
+
+This license applies only to official compiled swmmrs release artifacts
+("Binary Software") distributed by the copyright holder, including command-line
+archives and Python wheels, and to copies and modifications made from those
+artifacts. It does not apply to the private swmmrs solver source code.
+
+Permission is hereby granted, free of charge, to any person obtaining the Binary
+Software to use, execute, copy, reproduce, modify, adapt, merge, publish,
+distribute, sublicense, and/or sell copies of the Binary Software, for any
+purpose, including commercial purposes, and to permit persons to whom the
+Binary Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this license notice shall be included with all
+copies or substantial portions of the Binary Software that are distributed.
+
+This license grants no access to, or rights in, private source code that is not
+included in the Binary Software. It grants no right to use the names, logos, or
+trademarks of swmmrs or its contributors to imply endorsement.
+
+Third-party components included in the Binary Software remain governed by
+their own licenses and notices.
+
+THE BINARY SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THE BINARY SOFTWARE OR THE USE OF OR OTHER
+DEALINGS IN THE BINARY SOFTWARE.

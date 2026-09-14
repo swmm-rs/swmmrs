@@ -1,0 +1,103 @@
+.md-typeset .swmm-hero-title {
+  color: var(--md-default-fg-color);
+  font-size: clamp(2.5rem, 6vw, 3.8rem);
+  font-weight: 750;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin: 1.8rem 0 1.2rem;
+  max-width: 16ch;
+}
+
+.md-typeset .swmm-hero-title em,
+.md-typeset .swmm-hero-title a {
+  color: var(--md-accent-fg-color);
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.1em;
+  transition:
+    color 400ms ease,
+    text-decoration-thickness 200ms ease;
+}
+
+.md-typeset .swmm-hero-title a:focus-visible {
+  border-radius: 0.08em;
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 0.14em;
+}
+
+.md-typeset .swmm-hero-title em:hover,
+.md-typeset .swmm-hero-title a:hover {
+  color: var(--md-accent-fg-color);
+  font-style: normal;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 0.1em;
+}
+
+.md-typeset .swmm-hero-lede {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.6;
+  max-width: 46rem;
+}
+
+.md-typeset .swmm-proof-ledger {
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 1.5rem 0 1.25rem;
+}
+
+.md-typeset .swmm-proof-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+  padding: 1rem 1.2rem 1.05rem 0;
+}
+
+.md-typeset .swmm-proof-item+.swmm-proof-item {
+  border-left: 1px solid var(--md-default-fg-color--lightest);
+  padding-left: 1.2rem;
+}
+
+.md-typeset .swmm-proof-label {
+  color: var(--md-accent-fg-color);
+  font-family: var(--md-code-font-family);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.md-typeset .swmm-proof-item strong {
+  color: var(--md-default-fg-color);
+  font-size: 0.95rem;
+}
+
+.md-typeset .swmm-proof-item strong+span {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+}
+
+@media screen and (max-width: 44rem) {
+  .md-typeset .swmm-proof-ledger {
+    grid-template-columns: 1fr;
+  }
+
+  .md-typeset .swmm-proof-item {
+    padding: 0.85rem 0;
+  }
+
+  .md-typeset .swmm-proof-item+.swmm-proof-item {
+    border-left: 0;
+    border-top: 1px solid var(--md-default-fg-color--lightest);
+    padding-left: 0;
+  }
+}
+
+
+.md-grid {
+  max-width: 68rem;
+}

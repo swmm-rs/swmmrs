@@ -1,0 +1,62 @@
+[TITLE]
+Expanded-schema output reader fixture.
+
+[OPTIONS]
+FLOW_UNITS           CFS
+INFILTRATION         HORTON
+FLOW_ROUTING         KINWAVE
+LINK_OFFSETS         DEPTH
+MIN_SLOPE            0
+ALLOW_PONDING        NO
+START_DATE           01/01/2020
+START_TIME           00:00:00
+REPORT_START_DATE    01/01/2020
+REPORT_START_TIME    00:00:00
+END_DATE             01/01/2020
+END_TIME             00:30:00
+SWEEP_START          01/01
+SWEEP_END            12/31
+DRY_DAYS             0
+REPORT_STEP          00:05:00
+WET_STEP             00:05:00
+DRY_STEP             00:05:00
+ROUTING_STEP         00:05:00
+
+[RAINGAGES]
+Gage                INTENSITY 0:05 1.0 TIMESERIES Rain
+
+[SUBCATCHMENTS]
+S1                  Gage J1 1.0 100.0 0.0 1.0 0
+
+[SUBAREAS]
+S1                  0.01 0.1 0.05 0.05 25 OUTLET
+
+[INFILTRATION]
+S1                  3.0 0.5 4.0 7.0 0
+
+[JUNCTIONS]
+J1                  0.0 10.0 0.0 0.0 0.0
+
+[OUTFALLS]
+O1                  0.0 FREE NO
+
+[CONDUITS]
+C1                  J1 O1 100.0 0.01 0.0 0.0 0.0 0.0
+
+[XSECTIONS]
+C1                  CIRCULAR 1.0 0.0 0.0 0.0 1
+
+[POLLUTANTS]
+TSS                 MG/L 0.0 0.0 0.0 0.0 NO
+
+[TIMESERIES]
+Rain                00:00 0.0
+Rain                00:30 0.0
+
+[REPORT]
+INPUT               NO
+CONTROLS            NO
+SUBCATCHMENTS       ALL
+NODES               ALL
+LINKS               ALL
+

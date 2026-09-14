@@ -1,0 +1,182 @@
+[TITLE]
+Provenance: pyswmm/swmm-nrtestsuite/LID/w_wo_IT_2Subcatchments.inp.
+;;Project Title/Notes
+ Example 5
+ A simple groundwater example.
+
+[OPTIONS]
+;;Option             Value
+WET_STEP             00:05:00
+DRY_DAYS             0
+END_DATE             09/15/2014
+
+INERTIAL_DAMPING     PARTIAL
+LAT_FLOW_TOL         5
+NORMAL_FLOW_LIMITED  BOTH
+SWEEP_END            12/31
+SWEEP_START          01/01
+ALLOW_PONDING        NO
+START_TIME           00:00:00
+MINIMUM_STEP         0.5
+REPORT_START_TIME    00:00:00
+VARIABLE_STEP        0.75
+INFILTRATION         HORTON
+LENGTHENING_STEP     0
+FORCE_MAIN_EQUATION  H-W
+MIN_SLOPE            0
+MAX_TRIALS           8
+MIN_SURFAREA         12.557
+ROUTING_STEP         0:00:30 
+REPORT_START_DATE    09/13/2014
+DRY_STEP             00:05:00
+REPORT_STEP          00:15:00
+
+START_DATE           09/13/2014
+END_TIME             00:00:00
+FLOW_ROUTING         DYNWAVE
+SYS_FLOW_TOL         5
+THREADS              1
+LINK_OFFSETS         DEPTH
+HEAD_TOLERANCE       0.005
+SKIP_STEADY_STATE    NO
+FLOW_UNITS           CFS
+RULE_STEP            00:00:00
+
+[EVAPORATION]
+;;Data Source    Parameters
+;;-------------- ----------------
+DRY_ONLY         NO
+CONSTANT         0.0
+
+[RAINGAGES]
+;;Name           Format    Interval SCF      Source    
+;;-------------- --------- ------ ------ ----------
+1                INTENSITY 0:15     1.0      TIMESERIES Rainfall        
+
+[SUBCATCHMENTS]
+;;Name           Rain Gage        Outlet           Area     %Imperv  Width    %Slope   CurbLen  SnowPack        
+;;-------------- ---------------- ---------------- -------- -------- -------- -------- -------- ----------------
+wIT              1                2                5        50       100      1        0                        
+woIT             1                2                5        50       100      1        0                        
+
+[SUBAREAS]
+;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     PctZero    RouteTo    PctRouted 
+;;-------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+woIT             0.01       0.1        0.05       0.05       25         OUTLET    
+wIT              0.01       0.1        0.05       0.05       25         OUTLET    
+
+[INFILTRATION]
+;;Subcatchment   Param1     Param2     Param3     Param4     Param5    
+;;-------------- ---------- ---------- ---------- ---------- ----------
+woIT             1.2        0.1        2          7          0         
+wIT              1.2        0.1        2          7          0         
+
+[LID_CONTROLS]
+;;Name           Type/Layer Parameters
+;;-------------- ---------- ----------
+IT               IT
+IT               SURFACE    1          .25        0.1        1.0        5         
+IT               STORAGE    3          0.50       0.01       0         
+IT               DRAIN      0          0.5        6          6          0          0                    
+
+[LID_USAGE]
+;;Subcatchment   LID Process      Number  Area       Width      InitSat    FromImp    ToPerv     RptFile                  DrainTo          FromPerv  
+;;-------------- ---------------- ------- ---------- ---------- ---------- ---------- ---------- ------------------------ ---------------- ----------
+wIT              IT               100     1090       10         0          100        1          "bob.txt"                   *                100             
+
+[JUNCTIONS]
+;;Name           Elevation  MaxDepth   InitDepth  SurDepth   Aponded   
+;;-------------- ---------- ---------- ---------- ---------- ----------
+2                0          0          0          0          0         
+
+[OUTFALLS]
+;;Name           Elevation  Type       Stage Data       Gated    Route To        
+;;-------------- ---------- ---------- ---------------- -------- ----------------
+1                0          FREE                        NO                       
+
+[CONDUITS]
+;;Name           From Node        To Node          Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow   
+;;-------------- ---------------- ---------------- ---------- ---------- ---------- ---------- ---------- ----------
+1                2                1                400        0.01       0          0          0          0         
+
+[XSECTIONS]
+;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels    Culvert   
+;;-------------- ------------ ---------------- ---------- ---------- ---------- ---------- ----------
+1                CIRCULAR     1                0          0          0          1                    
+
+[TIMESERIES]
+;;Name           Date       Time       Value     
+;;-------------- ---------- ---------- ----------
+Rainfall                    0:00       0.037     
+Rainfall                    0:15       0.111     
+Rainfall                    0:30       0.185     
+Rainfall                    0:45       0.259     
+Rainfall                    1:00       0.333     
+Rainfall                    1:15       0.407     
+Rainfall                    1:30       0.481     
+Rainfall                    1:45       0.556     
+Rainfall                    2:00       0.630     
+Rainfall                    2:15       0.644     
+Rainfall                    2:30       0.600     
+Rainfall                    2:45       0.556     
+Rainfall                    3:00       0.511     
+Rainfall                    3:15       0.467     
+Rainfall                    3:30       0.422     
+Rainfall                    3:45       0.378     
+Rainfall                    4:00       0.333     
+Rainfall                    4:15       0.289     
+Rainfall                    4:30       0.244     
+Rainfall                    4:45       0.200     
+Rainfall                    5:00       0.156     
+Rainfall                    5:15       0.111     
+Rainfall                    5:30       0.067     
+Rainfall                    5:45       0.022     
+Rainfall                    6:00       0         
+
+[REPORT]
+;;Reporting Options
+INPUT      YES
+CONTROLS   YES
+SUBCATCHMENTS ALL
+NODES ALL
+LINKS ALL
+
+[TAGS]
+
+[MAP]
+DIMENSIONS 81.344 3926.602 6422.757 7618.518
+Units      None
+
+[COORDINATES]
+;;Node           X-Coord            Y-Coord           
+;;-------------- ------------------ ------------------
+1                4841.480           4094.417          
+2                4098.640           4424.568          
+
+[VERTICES]
+;;Link           X-Coord            Y-Coord           
+;;-------------- ------------------ ------------------
+
+[Polygons]
+;;Subcatchment   X-Coord            Y-Coord           
+;;-------------- ------------------ ------------------
+wIT              2964.789           4971.831          
+wIT              6134.511           4986.413          
+wIT              6134.511           7445.652          
+wIT              2964.789           7450.704          
+woIT             2957.539           7437.452          
+woIT             2957.539           7437.452          
+woIT             2957.539           7437.452          
+woIT             3000.569           4960.151          
+woIT             3000.569           4960.151          
+woIT             1445.340           5236.773          
+woIT             480.238            5464.218          
+woIT             369.590            6558.410          
+woIT             443.355            7425.158          
+woIT             2963.686           7437.452          
+
+[SYMBOLS]
+;;Gage           X-Coord            Y-Coord           
+;;-------------- ------------------ ------------------
+1                3756.699           7083.461          
+

@@ -1,0 +1,86 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Daily climate-file temperature and temperature-derived evaporation with rainfall runoff.
+
+[OPTIONS]
+ROUTING_STEP         00:00:30
+REPORT_START_TIME    00:00:00
+FLOW_UNITS           CFS
+DRY_STEP             00:15:00
+REPORT_START_DATE    07/01/2020
+FLOW_ROUTING         KINWAVE
+END_DATE             07/05/2020
+WET_STEP             00:05:00
+START_DATE           07/01/2020
+DRY_DAYS             0
+LINK_OFFSETS         DEPTH
+END_TIME             00:00:00
+INFILTRATION         HORTON
+REPORT_STEP          01:00:00
+START_TIME           00:00:00
+
+[EVAPORATION]
+DRY_ONLY             NO
+TEMPERATURE
+
+[TEMPERATURE]
+FILE                  "climate-daily.dat" 07/01/2020 C10
+SNOWMELT              32 0.5 0.6 500 40 0
+WINDSPEED             MONTHLY 5 6 7 8 9 8 7 6 5 5 5 5
+
+[RAINGAGES]
+;;Name  Format     Interval  SCF  Source
+Gage    INTENSITY  1:00      1.0  TIMESERIES Rain
+
+[SUBCATCHMENTS]
+;;Name  Rain Gage  Outlet  Area  %Imperv  Width  %Slope  CurbLen
+S1      Gage       J1      1     70       200    1       0
+
+[SUBAREAS]
+;;Subcatchment  N-Imperv  N-Perv  S-Imperv  S-Perv  PctZero  RouteTo
+S1              0.01      0.10    0.02       0.05    25       OUTLET
+
+[INFILTRATION]
+;;Subcatchment  MaxRate  MinRate  Decay  DryTime  MaxInfil
+S1              1.0      0.2      4.0    7.0      0
+
+[JUNCTIONS]
+;;Name  Elevation  MaxDepth  InitDepth  SurDepth  Aponded
+J1      1          5         0          0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT     0          FREE              NO
+
+[CONDUITS]
+;;Name  From Node  To Node  Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+C1      J1         OUT      100     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link  Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+C1      CIRCULAR  1      0      0      0      1
+
+[TIMESERIES]
+;;Name  Date        Time   Value
+Rain    07/01/2020  00:00  0
+Rain                06:00  0.8
+Rain                07:00  0.8
+Rain                08:00  0.8
+Rain                09:00  0
+Rain    07/02/2020  12:00  0.6
+Rain                13:00  0.6
+Rain                14:00  0.6
+Rain                15:00  0
+Rain    07/03/2020  18:00  0.4
+Rain                19:00  0.4
+Rain                20:00  0
+Rain    07/05/2020  00:00  0
+
+[REPORT]
+INPUT          YES
+CONTINUITY     YES
+FLOWSTATS      YES
+CONTROLS       NO
+SUBCATCHMENTS  ALL
+NODES          ALL
+LINKS          ALL

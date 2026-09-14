@@ -1,0 +1,29 @@
+[project]
+name = "swmmrs-docs"
+version = "0.2.0"
+description = "Documentation for swmmrs"
+requires-python = ">=3.14"
+dependencies = [
+    "mkdocstrings-python>=2.0.5",
+    "swmm-pygments",
+    "zensical>=0.0.51",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "ipython>=9.16.1",
+]
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
+
+[tool.uv.workspace]
+members = [
+    "docs/swmm_pygments",
+]
+
+[tool.uv.sources]
+swmm-pygments = { workspace = true }
+

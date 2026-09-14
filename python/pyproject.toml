@@ -1,0 +1,65 @@
+[project]
+name = "swmmrs"
+version = "0.3.0"
+description = "Native Python bindings for the SWMM solver"
+readme = "README.md"
+authors = [{ name = "ckaros", email = "admin@swmm.rs" }]
+# The source license is Apache-2.0. Published wheels also include the
+# separately licensed native solver and its applicable runtime terms.
+license-files = [
+    "LICENSE",
+    "LICENSE_SCOPE.md",
+    "THIRD_PARTY_NOTICES.md",
+    "licenses/*.txt",
+]
+requires-python = ">=3.11"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/swmm-rs/swmmrs"
+Documentation = "https://github.com/swmm-rs/swmmrs/tree/main/docs"
+Repository = "https://github.com/swmm-rs/swmmrs"
+Issues = "https://github.com/swmm-rs/swmmrs/issues"
+
+[build-system]
+requires = ["maturin==1.15.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+python-source = "src"
+module-name = "swmmrs._swmmrs"
+features = ["pyo3/extension-module"]
+locked = true
+
+[tool.cibuildwheel]
+build = "cp311-* cp314t-*"
+skip = "*-musllinux_*"
+archs = ["native"]
+test-command = "python -I -W error::RuntimeWarning {project}/python/tests/wheel_smoke.py {project}/crates/solver/tests/data/test_ex1_metric.inp"
+
+[tool.cibuildwheel.linux]
+before-all = "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.97.1"
+environment = { PATH = "$HOME/.cargo/bin:$PATH", CARGO_INCREMENTAL = "0" }
+manylinux-x86_64-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+
+[[tool.cibuildwheel.overrides]]
+select = "*-macosx_x86_64"
+environment = { MACOSX_DEPLOYMENT_TARGET = "10.13", CARGO_INCREMENTAL = "0" }
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "ipython>=9.16.1",
+    "mypy>=2.3.0",
+    "pytest>=9.1.1",
+    "ruff>=0.16.0",
+    "ty>=0.0.64",
+]
+
+[tool.ty.src]
+exclude = ["tests/"]

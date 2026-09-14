@@ -1,0 +1,20 @@
+[workspace]
+
+[package]
+name = "swmmrs-native-bench"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+swmmrs = { path = "../../../crates/solver" }
+
+# Match the native CLI and Python release profiles.
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "unwind"
+debug = false
+strip = "debuginfo"
+incremental = false

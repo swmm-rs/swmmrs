@@ -1,0 +1,238 @@
+/*
+ * Solarized color system for Zensical's modern theme.
+ *
+ * The base and syntax colors are the canonical Solarized sRGB values. The
+ * orange used for links is adjusted slightly in each mode so normal-sized text
+ * remains readable while retaining Solarized Orange (#cb4b16) as the anchor.
+ */
+
+:root>* {
+  --solarized-base03: #002b36;
+  --solarized-base02: #073642;
+  --solarized-base01: #586e75;
+  --solarized-base00: #657b83;
+  --solarized-base0: #839496;
+  --solarized-base1: #93a1a1;
+  --solarized-base2: #eee8d5;
+  --solarized-base3: #fdf6e3;
+  --solarized-light-text: #4a646c;
+  --solarized-yellow: #b58900;
+  --solarized-orange: #cb4b16;
+  --solarized-red: #dc322f;
+  --solarized-magenta: #d33682;
+  --solarized-violet: #6c71c4;
+  --solarized-blue: #268bd2;
+  --solarized-cyan: #2aa198;
+  --solarized-green: #859900;
+
+  /* Solarized syntax highlighting in both modes. */
+  --md-code-hl-number-color: var(--solarized-cyan);
+  --md-code-hl-special-color: var(--solarized-red);
+  --md-code-hl-function-color: var(--solarized-blue);
+  --md-code-hl-constant-color: var(--solarized-violet);
+  --md-code-hl-keyword-color: var(--solarized-green);
+  --md-code-hl-string-color: var(--solarized-yellow);
+  --md-code-hl-operator-color: var(--solarized-orange);
+  --md-code-hl-generic-color: var(--solarized-magenta);
+  --md-code-hl-name-color: var(--md-code-fg-color);
+  --md-code-hl-punctuation-color: var(--md-default-fg-color--light);
+  --md-code-hl-comment-color: var(--md-default-fg-color--light);
+  --md-code-hl-variable-color: var(--md-code-fg-color);
+}
+
+.highlight.language-swmm .gh {
+  font-weight: 600;
+}
+
+.highlight.language-swmm .c1 {
+  font-style: italic;
+}
+
+/* Solarized Light */
+[data-md-color-scheme="default"] {
+  color-scheme: light;
+
+  /* A deeper Base01-derived tone keeps long-form text crisp on Base3. */
+  --md-default-fg-color: var(--solarized-light-text);
+  --md-default-fg-color--light: var(--solarized-base01);
+  --md-default-fg-color--lighter: var(--solarized-base00);
+  --md-default-fg-color--lightest: rgb(101 123 131 / 18%);
+  --md-default-bg-color: var(--solarized-base3);
+  --md-default-bg-color--light: rgb(238 232 213 / 72%);
+  --md-default-bg-color--lighter: rgb(238 232 213 / 46%);
+  --md-default-bg-color--lightest: rgb(238 232 213 / 20%);
+
+  --md-code-fg-color: var(--solarized-light-text);
+  --md-code-bg-color: var(--solarized-base2);
+  --md-code-bg-color--light: rgb(238 232 213 / 90%);
+  --md-code-bg-color--lighter: rgb(238 232 213 / 58%);
+  --md-code-hl-color: var(--solarized-orange);
+  --md-code-hl-color--light: rgb(203 75 22 / 14%);
+
+  /* A slightly deeper orange gives body-size links AA contrast on Base3. */
+  --md-primary-fg-color: #c04715;
+  --md-primary-fg-color--light: var(--solarized-orange);
+  --md-primary-fg-color--dark: #a83e12;
+  --md-primary-bg-color: var(--solarized-base3);
+  --md-primary-bg-color--light: rgb(253 246 227 / 72%);
+  --md-accent-fg-color: #c04715;
+  --md-accent-fg-color--transparent: rgb(203 75 22 / 12%);
+  --md-accent-bg-color: var(--solarized-base3);
+  --md-accent-bg-color--light: rgb(253 246 227 / 72%);
+
+  --md-typeset-color: var(--md-default-fg-color);
+  --md-typeset-a-color: var(--md-primary-fg-color);
+  --md-typeset-kbd-color: rgb(238 232 213 / 78%);
+  --md-typeset-kbd-accent-color: var(--solarized-base2);
+  --md-typeset-kbd-border-color: var(--solarized-base1);
+  --md-typeset-mark-color: rgb(181 137 0 / 22%);
+  --md-typeset-table-color: rgb(88 110 117 / 22%);
+  --md-typeset-table-color--light: rgb(238 232 213 / 45%);
+
+  --md-admonition-fg-color: var(--md-default-fg-color);
+  --md-admonition-bg-color: var(--solarized-base3);
+  --md-footer-bg-color: var(--solarized-base2);
+  --md-footer-bg-color--dark: #e5dec8;
+
+  --color-foreground: 88 110 117;
+  --color-background: 253 246 227;
+  --color-background-subtle: 238 232 213;
+  --color-backdrop: 0 43 54;
+}
+
+/* Solarized Dark */
+@media screen {
+  [data-md-color-scheme="slate"] {
+    color-scheme: dark;
+
+    --md-default-fg-color: var(--solarized-base1);
+    --md-default-fg-color--light: var(--solarized-base0);
+    --md-default-fg-color--lighter: var(--solarized-base00);
+    --md-default-fg-color--lightest: rgb(131 148 150 / 16%);
+    --md-default-bg-color: var(--solarized-base03);
+    --md-default-bg-color--light: rgb(7 54 66 / 82%);
+    --md-default-bg-color--lighter: rgb(7 54 66 / 54%);
+    --md-default-bg-color--lightest: rgb(7 54 66 / 28%);
+
+    --md-code-fg-color: var(--solarized-base1);
+    --md-code-bg-color: var(--solarized-base02);
+    --md-code-bg-color--light: rgb(7 54 66 / 90%);
+    --md-code-bg-color--lighter: rgb(7 54 66 / 58%);
+    --md-code-hl-color: var(--solarized-orange);
+    --md-code-hl-color--light: rgb(203 75 22 / 18%);
+
+    /* A lighter orange gives body-size links AA contrast on Base03. */
+    --md-primary-fg-color: #e86630;
+    --md-primary-fg-color--light: #ef7d45;
+    --md-primary-fg-color--dark: var(--solarized-orange);
+    --md-primary-bg-color: var(--solarized-base03);
+    --md-primary-bg-color--light: rgb(0 43 54 / 72%);
+    --md-accent-fg-color: #e86630;
+    --md-accent-fg-color--transparent: rgb(203 75 22 / 18%);
+    --md-accent-bg-color: var(--solarized-base03);
+    --md-accent-bg-color--light: rgb(0 43 54 / 72%);
+
+    --md-typeset-color: var(--md-default-fg-color);
+    --md-typeset-a-color: var(--md-primary-fg-color);
+    --md-typeset-kbd-color: rgb(7 54 66 / 92%);
+    --md-typeset-kbd-accent-color: rgb(88 110 117 / 45%);
+    --md-typeset-kbd-border-color: var(--solarized-base01);
+    --md-typeset-mark-color: rgb(181 137 0 / 28%);
+    --md-typeset-table-color: rgb(147 161 161 / 20%);
+    --md-typeset-table-color--light: rgb(7 54 66 / 55%);
+
+    --md-admonition-fg-color: var(--md-default-fg-color);
+    --md-admonition-bg-color: var(--solarized-base03);
+    --md-footer-bg-color: var(--solarized-base02);
+    --md-footer-bg-color--dark: var(--solarized-base03);
+
+    --color-foreground: 131 148 150;
+    --color-background: 0 43 54;
+    --color-background-subtle: 7 54 66;
+    --color-backdrop: 0 26 32;
+  }
+
+  /*
+   * Modern admonitions use translucent semantic colors. On Base03 those hues
+   * blend with the blue background, so use solid, darkened semantic surfaces.
+   */
+  [data-md-color-scheme="slate"] .md-typeset .admonition,
+  [data-md-color-scheme="slate"] .md-typeset details {
+    --swmm-admonition-bg: hsl(219, 38%, 16%);
+    background-color: var(--swmm-admonition-bg);
+    outline: 1px solid hsl(219, 37%, 27%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .abstract {
+    --swmm-admonition-bg: hsl(199, 45%, 15%);
+    outline-color: hsl(199, 44%, 26%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .info {
+    --swmm-admonition-bg: hsl(188, 42%, 15%);
+    outline-color: hsl(188, 41%, 26%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .tip {
+    --swmm-admonition-bg: hsl(173, 37%, 22%);
+    outline-color: hsl(173, 36%, 33%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .success {
+    --swmm-admonition-bg: hsl(145, 34%, 14%);
+    outline-color: hsl(145, 33%, 25%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .question {
+    --swmm-admonition-bg: hsl(96, 30%, 15%);
+    outline-color: hsl(96, 29%, 26%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .warning {
+    --swmm-admonition-bg: hsl(33, 47%, 18%);
+    outline-color: hsl(33, 46%, 29%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .failure {
+    --swmm-admonition-bg: hsl(0, 38%, 16%);
+    outline-color: hsl(0, 37%, 27%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .danger {
+    --swmm-admonition-bg: hsl(349, 42%, 15%);
+    outline-color: hsl(349, 41%, 26%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .bug {
+    --swmm-admonition-bg: hsl(339, 38%, 15%);
+    outline-color: hsl(339, 37%, 26%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .example {
+    --swmm-admonition-bg: hsl(256, 30%, 17%);
+    outline-color: hsl(256, 29%, 28%);
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .quote {
+    --swmm-admonition-bg: hsl(192, 15%, 17%);
+    outline-color: hsl(192, 14%, 28%);
+  }
+}
+
+/* Zensical's slate scheme hard-codes white headings; keep them Solarized. */
+[data-md-color-scheme="default"] :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--solarized-base01);
+}
+
+[data-md-color-scheme="slate"] :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--solarized-base1);
+}
+
+/* The modern toolbar is neutral, so its title follows the strongest text tone. */
+[data-md-color-scheme="default"] .md-header__title {
+  color: var(--solarized-base03);
+}
+
+[data-md-color-scheme="slate"] .md-header__title {
+  color: var(--solarized-base2);
+}

@@ -1,0 +1,65 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+COOP/NCDC hourly rainfall file routed through a runoff subcatchment and conduit.
+
+[OPTIONS]
+INFILTRATION         HORTON
+END_TIME             00:00:00
+WET_STEP             00:05:00
+LINK_OFFSETS         DEPTH
+START_DATE           04/17/2013
+FLOW_ROUTING         KINWAVE
+END_DATE             04/19/2013
+REPORT_STEP          00:30:00
+ROUTING_STEP         00:00:30
+REPORT_START_TIME    00:00:00
+DRY_DAYS             0
+REPORT_START_DATE    04/17/2013
+DRY_STEP             00:15:00
+FLOW_UNITS           CFS
+START_TIME           00:00:00
+
+[EVAPORATION]
+DRY_ONLY             NO
+CONSTANT             0
+
+[RAINGAGES]
+;;Name  Format     Interval  SCF  Source
+RG1     INTENSITY  1:00      1.0  FILE "ncdc.dat" COOP:134101 IN
+
+[SUBCATCHMENTS]
+;;Name  Rain Gage  Outlet  Area  %Imperv  Width  %Slope  CurbLen
+S1      RG1        J1      1     80       200    1       0
+
+[SUBAREAS]
+;;Subcatchment  N-Imperv  N-Perv  S-Imperv  S-Perv  PctZero  RouteTo
+S1              0.01      0.10    0.02       0.05    25       OUTLET
+
+[INFILTRATION]
+;;Subcatchment  MaxRate  MinRate  Decay  DryTime  MaxInfil
+S1              1.0      0.2      4.0    7.0      0
+
+[JUNCTIONS]
+;;Name  Elevation  MaxDepth  InitDepth  SurDepth  Aponded
+J1      1          5         0          0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT     0          FREE              NO
+
+[CONDUITS]
+;;Name  From Node  To Node  Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+C1      J1         OUT      100     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link  Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+C1      CIRCULAR  1      0      0      0      1
+
+[REPORT]
+INPUT          YES
+CONTINUITY     YES
+FLOWSTATS      YES
+CONTROLS       NO
+SUBCATCHMENTS  ALL
+NODES          ALL
+LINKS          ALL

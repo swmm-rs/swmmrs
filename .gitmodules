@@ -1,0 +1,3 @@
+[submodule "swmmrs-solver"]
+	path = crates/solver
+	url = git@github.com:swmm-rs/swmmrs-solver.git

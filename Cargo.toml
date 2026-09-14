@@ -1,0 +1,25 @@
+[workspace]
+members = ["crates/output", "crates/run", "crates/solver"]
+exclude = ["python", "scripts", "thirdparty/swmmrs-parallel"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.97.1"
+homepage = "https://github.com/swmm-rs/swmmrs"
+repository = "https://github.com/swmm-rs/swmmrs"
+authors = ["karosc"]
+license = "Apache-2.0"
+
+[workspace.dependencies]
+swmmrs = { version = "0.1.0", path = "crates/solver" }
+swmm-output = { version = "0.2.1", path = "crates/output" }
+
+[profile.release]
+opt-level = 3
+panic = "unwind"
+lto = "fat"
+codegen-units = 1
+debug = false
+strip = "debuginfo"
+incremental = false

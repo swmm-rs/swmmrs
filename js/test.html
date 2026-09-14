@@ -1,0 +1,136 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SWMM browser regression</title>
+<h1>SWMM browser regression</h1>
+<pre id="result">Running…</pre>
+<script type="module">
+  import { Simulation, runSwmm } from "./index.js";
+
+  function assert(condition, message) {
+    if (!condition) throw new Error(message);
+  }
+
+  function checkReport(report, runs, openedAt, startedAt, returnedAt) {
+    assert(report.includes("Flow Routing Continuity"), "Report must retain summary results");
+    assert(/^\s*\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}\s+[-+\d.]/m.test(report), "Report must contain the requested detailed time-series rows");
+    const starts = [...report.matchAll(/^\s*Analysis begun on:\s+(.+)$/gm)];
+    const ends = [...report.matchAll(/^\s*Analysis ended on:\s+(.+)$/gm)];
+    const elapsed = [...report.matchAll(/^\s*Total elapsed time:\s+(.+)$/gm)];
+    assert(starts.length === runs && ends.length === runs && elapsed.length === runs, "Each run must append exactly one complete runtime footer");
+    const begun = Date.parse(starts.at(-1)[1]);
+    const ended = Date.parse(ends.at(-1)[1]);
+    assert(Number.isFinite(begun) && Number.isFinite(ended) && begun <= ended, "Footer must contain valid analysis start/end times");
+    assert(begun >= openedAt - 1000 && begun <= returnedAt, "Analysis start must use this project's clock");
+    assert(ended >= startedAt - 1000 && ended <= returnedAt, "Analysis end must describe the current run");
+    assert(starts.every(start => start[1] === starts[0][1]), "Reruns must retain the native project-open clock");
+    const duration = elapsed.at(-1)[1].trim();
+    const clock = /^(?:(\d+)\.)?(\d{2}):([0-5]\d):([0-5]\d)$/.exec(duration);
+    assert(duration === "< 1 sec" || clock, "Footer must contain native elapsed-time formatting");
+    const seconds = clock ? Number(clock[1] || 0) * 86400 + Number(clock[2]) * 3600 + Number(clock[3]) * 60 + Number(clock[4]) : 0;
+    assert(Math.abs(seconds * 1000 - (ended - begun)) <= 1000, "Elapsed time must agree with the analysis clock");
+    assert(report.trimEnd().endsWith(duration), "Runtime footer must end the report");
+  }
+
+  // Enough real conduits to exercise both aligned and dynamic parallel work.
+  const input = `[OPTIONS]
+FLOW_UNITS CFS
+FLOW_ROUTING DYNWAVE
+START_DATE 01/01/2022
+START_TIME 00:00:00
+REPORT_START_DATE 01/01/2022
+REPORT_START_TIME 00:00:00
+END_DATE 01/01/2022
+END_TIME 00:02:00
+REPORT_STEP 00:00:10
+WET_STEP 00:00:10
+DRY_STEP 00:00:10
+ROUTING_STEP 00:00:01
+THREADS 0
+[JUNCTIONS]
+${Array.from({ length: 16 }, (_, i) => `J${i} ${16 - i} 5 0.5 0 0`).join("\n")}
+[OUTFALLS]
+O1 0 FREE NO
+O2 0 FREE NO
+[CONDUITS]
+${Array.from({ length: 16 }, (_, i) => `C${i} J${i} ${i === 15 ? "O1" : `J${i + 1}`} 100 0.013 0 0 0 0`).join("\n")}
+[ORIFICES]
+OR1 J15 O2 SIDE 0 0.65 NO 0
+[XSECTIONS]
+${Array.from({ length: 16 }, (_, i) => `C${i} CIRCULAR 3 0 0 0 1`).join("\n")}
+OR1 CIRCULAR 1 0 0 0
+[TIMESERIES]
+FLOW_SERIES FILE data/inflow.dat
+[INFLOWS]
+J0 FLOW FLOW_SERIES FLOW 1 1 0
+[REPORT]
+INPUT YES
+NODES ALL
+LINKS ALL
+`;
+  const files = { "data/inflow.dat": "01/01/2022 00:00 2\n01/01/2022 00:01 4\n01/01/2022 00:02 2\n" };
+
+  async function check() {
+    assert(navigator.hardwareConcurrency >= 2, "This check needs at least two browser CPU lanes");
+    const teams = [...new Set([1, 2, Math.min(4, navigator.hardwareConcurrency)])];
+    const outputs = await Promise.all(teams.map(async threads => {
+      const openedAt = Date.now();
+      const sim = await Simulation.open(input, files, { threads });
+      try {
+        assert((await sim.info()).effectiveThreads === threads, "Requested parallelism was lost");
+        const firstStartedAt = Date.now();
+        const first = await sim.run();
+        checkReport(first.report, 1, openedAt, firstStartedAt, Date.now());
+        assert(await sim.getState() === "ended", "Run must retain completed results");
+        const endedNode = await sim.node("J0");
+        assert(Number.isFinite(endedNode.depth), "Finished results must remain readable");
+        const repeated = await sim.finish();
+        assert(repeated.report === first.report, "Repeated finish must not append another footer");
+        assert(repeated.output.length === first.output.length && repeated.output.every((v, i) => v === first.output[i]), "Report finalization changed binary output");
+        const secondStartedAt = Date.now();
+        const second = await sim.run();
+        checkReport(second.report, 2, openedAt, secondStartedAt, Date.now());
+        assert(first.output.length === second.output.length && first.output.every((v, i) => v === second.output[i]), "Rerun retained stale state or file bytes");
+        await sim.start();
+        await sim.step();
+        const snapshot = await sim.nodes.snapshot(["J0"]);
+        const depth = snapshot.depth[0];
+        await sim.setLinkTargetSetting("OR1", 0.25);
+        assert((await sim.link("OR1")).targetSetting === 0.25, "Control was not applied");
+        await sim.setNodeExternalInflow("J0", 5);
+        await sim.stride(10, true);
+        assert((await sim.node("J0")).lateralInflow > 6, "External file and live inflow were not combined");
+        assert(snapshot.depth[0] === depth, "A returned snapshot changed after stepping");
+        const partial = await sim.finish();
+        checkReport(partial.report, 3, openedAt, secondStartedAt, Date.now());
+        return first.output;
+      } finally {
+        await sim.close();
+        await sim.close();
+      }
+    }));
+    const serial = outputs[0];
+    for (const output of outputs.slice(1)) {
+      assert(output.length === serial.length && output.every((v, i) => v === serial[i]), "Parallel binary output differs from serial");
+    }
+    let missingFileFailed = false;
+    const oneShotStartedAt = Date.now();
+    const oneShot = await runSwmm(input.replace("THREADS 0", "THREADS 2"), files, { threads: navigator.hardwareConcurrency });
+    checkReport(oneShot.report, 1, oneShotStartedAt, oneShotStartedAt, Date.now());
+    assert(oneShot.output.length === serial.length && oneShot.output.every((v, i) => v === serial[i]), "One-shot close changed returned binary output");
+    try { await runSwmm(input, {}, { threads: 2 }); }
+    catch (error) { missingFileFailed = error.code === 361; }
+    assert(missingFileFailed, "Missing external file must report the solver failure");
+    const disabled = await runSwmm(input.replace("INPUT YES", "DISABLED YES"), files, { threads: 2 });
+    const binary = new DataView(disabled.output.buffer);
+    assert(binary.getInt32(disabled.output.length - 8, true) === 0 && binary.getInt32(disabled.output.length - 4, true) === binary.getInt32(0, true), "Disabled reports must still flush the finalized binary output");
+    return `PASS: SWMMRS parallel ${teams.join("/")} lanes, byte-identical output, runtime footers, reruns, controls, snapshots, external files, finalized output, close.`;
+  }
+
+  try {
+    document.querySelector("#result").textContent = await check();
+    document.documentElement.dataset.result = "pass";
+  } catch (error) {
+    document.querySelector("#result").textContent = error.stack || String(error);
+    document.documentElement.dataset.result = "fail";
+  }
+</script>

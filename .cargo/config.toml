@@ -1,0 +1,5 @@
+# PyO3 discovers the active Python interpreter. Do not pin a repository-local
+# virtualenv here: release builds run with an explicitly provisioned interpreter.
+
+# [target.x86_64-unknown-linux-gnu]
+# rustflags = ["-Clink-arg=-Wl,--no-rosegment"]

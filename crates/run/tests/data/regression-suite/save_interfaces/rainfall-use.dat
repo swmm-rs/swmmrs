@@ -1,0 +1,5 @@
+; Purpose-built rainfall interface input (inches per 5-minute interval)
+GAGE  2020  01  01  00  00  0.000
+GAGE  2020  01  01  00  05  0.300
+GAGE  2020  01  01  00  10  0.200
+GAGE  2020  01  01  00  15  0.000

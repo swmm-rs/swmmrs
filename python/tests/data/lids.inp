@@ -1,0 +1,105 @@
+[TITLE]
+LID configuration public behavior coverage.
+
+[OPTIONS]
+FLOW_UNITS           CFS
+INFILTRATION         HORTON
+FLOW_ROUTING         KINWAVE
+LINK_OFFSETS         DEPTH
+START_DATE           01/01/2020
+START_TIME           00:00:00
+REPORT_START_DATE    01/01/2020
+REPORT_START_TIME    00:00:00
+END_DATE             01/01/2020
+END_TIME             00:20:00
+REPORT_STEP          00:01:00
+WET_STEP             00:01:00
+DRY_STEP             00:01:00
+ROUTING_STEP         00:00:30
+
+[RAINGAGES]
+Gage INTENSITY 0:01 1.0 TIMESERIES RainSeries
+
+[SUBCATCHMENTS]
+With-Lids Gage J1        1.0 50 100 1.0 0
+Receiver  Gage J1        1.0 25 100 1.0 0
+
+[SUBAREAS]
+With-Lids 0.01 0.1 0.05 0.05 25 OUTLET
+Receiver  0.01 0.1 0.05 0.05 25 OUTLET
+
+[INFILTRATION]
+With-Lids 3.0 0.5 4.0 7.0 0
+Receiver  3.0 0.5 4.0 7.0 0
+
+[LID_CONTROLS]
+BC      BC
+BC      SURFACE     6   0.25  0.1    1.0   5
+BC      SOIL        12  0.5   0.2    0.1   0.5   10.0  3.5
+BC      STORAGE     12  0.75  0.5    2
+BC      DRAIN       1   0.5   6      6     10    5     DrainCurve
+GR      GR
+GR      SURFACE     6   0.25  0.1    1.0   5
+GR      SOIL        12  0.5   0.2    0.1   0.5   10.0  3.5
+GR      DRAINMAT    3   0.5   0.1
+IT      IT
+IT      SURFACE     6   0.25  0.1    1.0   5
+IT      STORAGE     12  0.75  0.5    0
+IT      DRAIN       1   0.5   6      6     0     0
+PP      PP
+PP      SURFACE     6   0.25  0.1    1.0   5
+PP      PAVEMENT    6   0.15  0.1    100   2     2     0.4
+PP      SOIL        12  0.5   0.2    0.1   0.5   10.0  3.5
+PP      STORAGE     12  0.75  0.5    2
+PP      DRAIN       1   0.5   6      6     0     0
+RB      RB
+RB      STORAGE     48  1.0   0      0
+RB      DRAIN       1   0.5   0      6     0     0
+RD      RD
+RD      SURFACE     6   0.25  0.1    1.0   5
+RG      RG
+RG      SURFACE     6   0.25  0.1    1.0   5
+RG      SOIL        12  0.5   0.2    0.1   0.5   10.0  3.5
+SWALE   VS
+SWALE   SURFACE     12  0.25  0.1    1.0   1
+CURVE-RB RB
+CURVE-RB STORAGE     48  1.0   0      0
+CURVE-RB DRAIN       0   0     0      0     0     0     DrainCurve
+
+[LID_USAGE]
+With-Lids BC      1 50 10 10 10 0 * J1       5
+With-Lids GR      1 50 10 20 10 1 * Receiver 5
+With-Lids IT      1 50 10 30 10 1 * *        5
+With-Lids PP      1 50 10 40 10 1 * *        5
+With-Lids RB      1 50 10 50 10 1 * *        5
+With-Lids RD      1 50 10 60 10 1 * *        5
+With-Lids RG      1 50 10 70 10 1 * *        5
+With-Lids SWALE   1 50 10 80 10 1 * *        5
+
+[JUNCTIONS]
+J1 10 5 0 0 0
+
+[OUTFALLS]
+Out 0 FREE NO
+
+[CONDUITS]
+Pipe J1 Out 100 0.013 0 0 0 0
+
+[XSECTIONS]
+Pipe CIRCULAR 2 0 0 0 1
+
+[CURVES]
+DrainCurve CONTROL 0 1
+DrainCurve         1 1
+
+[TIMESERIES]
+RainSeries 00:00 0
+RainSeries 00:01 0.1
+RainSeries 00:20 0
+
+[REPORT]
+INPUT NO
+CONTROLS NO
+SUBCATCHMENTS ALL
+NODES ALL
+LINKS ALL

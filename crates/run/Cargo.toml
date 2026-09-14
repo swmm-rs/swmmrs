@@ -1,0 +1,22 @@
+[package]
+name = "runswmmrs"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+homepage = "https://github.com/swmm-rs/swmmrs"
+repository = "https://github.com/swmm-rs/swmmrs"
+authors = ["karosc"]
+license = "Apache-2.0"
+description = "Command-line wrapper for the swmmrs solver (runswmmrs)."
+autobenches = false
+
+[dependencies]
+swmmrs = { path = "../solver" }
+rand = "0.10.2"
+
+[dev-dependencies]
+swmmrs = { path = "../solver", features = ["test-support"] }
+
+[[bin]]
+name = "runswmmrs"
+path = "src/main.rs"

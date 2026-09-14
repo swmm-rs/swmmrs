@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWMM Runner</title>
+  <style>
+    :root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; background: Canvas; color: CanvasText; }
+    main { width: min(72rem, calc(100% - 2rem)); margin: 3rem auto; }
+    h1 { margin-bottom: .25rem; }
+    form { display: grid; gap: 1rem; max-width: 36rem; margin: 2rem 0; }
+    label { display: grid; gap: .35rem; font-weight: 650; }
+    small { font-weight: 400; color: GrayText; }
+    input, button { font: inherit; }
+    input { padding: .65rem; border: 1px solid GrayText; border-radius: .4rem; }
+    button { justify-self: start; padding: .65rem 1.1rem; border: 0; border-radius: .4rem; background: #1769e0; color: white; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: wait; }
+    output { min-height: 1.5rem; }
+    pre { min-height: 20rem; max-height: 60vh; overflow: auto; padding: 1rem; border: 1px solid GrayText; border-radius: .4rem; background: color-mix(in srgb, CanvasText 6%, Canvas); white-space: pre; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>SWMM Runner</h1>
+    <p>Choose a model and any files it references, then run it in your browser.</p>
+
+    <form id="runner">
+      <label>
+        Model input (.inp)
+        <input id="model" type="file" accept=".inp" required>
+      </label>
+      <label>
+        External files
+        <input id="files" type="file" multiple>
+        <small>Optional. File names must match those used by the model.</small>
+      </label>
+      <button id="run" type="submit">Run model</button>
+      <output id="status" aria-live="polite">Ready</output>
+    </form>
+
+    <h2>Report</h2>
+    <pre id="report" tabindex="0">Run a model to view its report.</pre>
+  </main>
+
+  <script type="module">
+    import { runSwmm } from "./index.js";
+
+    const form = document.querySelector("#runner");
+    const model = document.querySelector("#model");
+    const files = document.querySelector("#files");
+    const run = document.querySelector("#run");
+    const status = document.querySelector("#status");
+    const report = document.querySelector("#report");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      run.disabled = true;
+      form.setAttribute("aria-busy", "true");
+      status.textContent = "Running…";
+      report.textContent = "Running model…";
+
+      try {
+        const externalFiles = Object.fromEntries(
+          [...files.files].map((file) => [file.webkitRelativePath || file.name, file]),
+        );
+        const result = await runSwmm(model.files[0], externalFiles);
+        report.textContent = result.report;
+        status.textContent = "Complete";
+      } catch (error) {
+        report.textContent = error.report || error.message || String(error);
+        status.textContent = error.code ? `Failed (code ${error.code})` : "Failed";
+      } finally {
+        run.disabled = false;
+        form.removeAttribute("aria-busy");
+      }
+    });
+  </script>
+</body>
+</html>

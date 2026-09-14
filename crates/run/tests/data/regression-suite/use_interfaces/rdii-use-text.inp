@@ -1,0 +1,53 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Legacy text RDII interface routed through a junction and conduit.
+
+[OPTIONS]
+ROUTING_STEP         00:00:05
+REPORT_START_DATE    01/01/2020
+THREADS              1
+DRY_STEP             00:05:00
+START_TIME           00:00:00
+MAX_TRIALS           8
+END_TIME             01:00:00
+MIN_SURFAREA         12.566
+END_DATE             01/01/2020
+VARIABLE_STEP        0.75
+HEAD_TOLERANCE       0.005
+WET_STEP             00:05:00
+LINK_OFFSETS         DEPTH
+INFILTRATION         HORTON
+FLOW_ROUTING         DYNWAVE
+DRY_DAYS             0
+REPORT_STEP          00:05:00
+START_DATE           01/01/2020
+FLOW_UNITS           CFS
+REPORT_START_TIME    00:00:00
+
+[FILES]
+USE RDII "rdii-text-interface.dat"
+
+[JUNCTIONS]
+;;Name          Elevation  MaxDepth  InitDepth  SurDepth  Aponded
+INTERFACE_NODE  95         10        0          0         0
+
+[OUTFALLS]
+;;Name              Elevation  Type  Stage Data  Gated
+DOWNSTREAM_OUTFALL  90         FREE              NO
+
+[CONDUITS]
+;;Name           From Node       To Node             Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+DOWNSTREAM_PIPE  INTERFACE_NODE  DOWNSTREAM_OUTFALL  500     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link           Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+DOWNSTREAM_PIPE  CIRCULAR  3      0      0      0      1
+
+[REPORT]
+INPUT          YES
+CONTINUITY     YES
+FLOWSTATS      YES
+CONTROLS       NO
+SUBCATCHMENTS  NONE
+NODES          ALL
+LINKS          ALL

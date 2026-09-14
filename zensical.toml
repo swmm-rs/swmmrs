@@ -1,0 +1,305 @@
+[project]
+nav = [
+    { Home = "index.md" },
+    { Concepts = [
+        { Overview = "concepts/index.md" },
+        { "Isolated simulations and state" = "concepts/simulation-ownership.md" },
+        { "Declarations and preparation" = "concepts/declarations-and-preparation.md" },
+        { "Solver lifecycle" = "concepts/solver-lifecycle.md" },
+        { "Continuation and branching" = "concepts/continuation-and-branching.md" },
+    ] },
+    { "Solver Info" = [
+        { "Differences from EPA SWMM" = [
+            { Overview = "epa-swmm-deviations.md" },
+            { "Software architecture" = "epa-swmm-deviations/software-architecture.md" },
+            { "Solver features" = [
+                { Overview = "epa-swmm-deviations/solver-features/index.md" },
+                { Hydraulics = [
+                    { Overview = "epa-swmm-deviations/solver-features/hydraulics/index.md" },
+                    { "True-ellipse hydraulics" = "epa-swmm-deviations/solver-features/hydraulics/true-ellipse-behavior.md" },
+                ] },
+                { Hydrology = [
+                    { Overview = "epa-swmm-deviations/solver-features/hydrology/index.md" },
+                    { "Antecedent Moisture Model RDII" = "epa-swmm-deviations/solver-features/hydrology/amm-rdii.md" },
+                ] },
+            ] },
+        ] },
+        { "Solver changelog" = [
+            { Changelog = "solver-changelog.md" },
+            { "Known EPA SWMM 5.3 issues" = "epa-swmm-5.3-known-issues.md" },
+        ] },
+        { "Regression validation" = "regression-validation.md" },
+        { "Real-world benchmarks" = "benchmark-results.md" },
+    ] },
+    { "Governance and trust" = "governance.md" },
+    { Contributing = "contributing/index.md" },
+    { "Command line" = [
+        { Overview = "cli/index.md" },
+        { Installation = "cli/install.md" },
+    ] },
+    { Python = [
+        { Overview = "python/index.md" },
+        { "Getting started" = [
+            { "Install and run your first model" = "python/get-started.md" },
+            { "Choose a run workflow" = "python/workflows.md" },
+        ] },
+        { "User guide" = [
+            { Overview = "python/user-guide.md" },
+            { "Build and run" = [
+                { "Inspect model definitions" = "guides/inspect-model-definitions.md" },
+                { "Configure a model" = "guides/configure-model.md" },
+                { "Run a model" = "guides/run-model.md" },
+            ] },
+            { "Observe results" = [
+                { "Collect results and statistics" = "guides/collect-results.md" },
+                { "Read finalized binary output" = "guides/read-output.md" },
+            ] },
+            { "Control and scenarios" = [
+                { "Runtime forcings" = "guides/runtime-forcings.md" },
+                { "Simulation checkpoints and forks" = "guides/checkpoints-and-forks.md" },
+                { "EPA hotstarts and chained runs" = "guides/hotstarts.md" },
+                { Recipes = "guides/recipes.md" },
+            ] },
+            { "Python behavior" = [
+                { "Lifecycle and ownership" = "python/concepts/lifecycle.md" },
+                { "Property getters and live views" = "python/concepts/property-access.md" },
+                { "Live views, snapshots, and statistics" = "python/concepts/results.md" },
+                { "Units and time" = "python/concepts/units-and-time.md" },
+                { "Errors and recovery" = "python/concepts/errors-and-recovery.md" },
+            ] },
+        ] },
+        { "Migration and support" = [
+            { "Migrating from PySWMM" = "python/migrating-from-pyswmm.md" },
+            { "Compatibility and limitations" = "python/compatibility.md" },
+            { Troubleshooting = "python/troubleshooting.md" },
+        ] },
+        { "API reference" = [
+            { Overview = "python/api/index.md" },
+            { Simulation = "python/api/simulation.md" },
+            { "Binary output" = "python/api/output.md" },
+            { "Simulation options" = "python/api/options.md" },
+            { Objects = [
+                { Node = "python/api/node.md" },
+                { Link = "python/api/link.md" },
+                { Subcatchment = "python/api/subcatchment.md" },
+                { "Rain gage" = "python/api/rain_gage.md" },
+                { RDII = "python/api/rdii.md" },
+                { LID = "python/api/lid.md" },
+                { Collections = "python/api/generics.md" },
+            ] },
+            { "Model definitions" = "python/api/definitions.md" },
+            { "Time series" = "python/api/time_series.md" },
+            { "Snapshots and statistics" = "python/api/snapshots.md" },
+            { Enums = "python/api/enums.md" },
+            { Exceptions = "python/api/exceptions.md" },
+            { "Package metadata" = "python/api/package-metadata.md" },
+        ] },
+    ] },
+    { "JavaScript / TypeScript" = [
+        { Overview = "javascript/index.md" },
+        { "Getting started" = [
+            { "Build and run your first model" = "javascript/get-started.md" },
+            { "Choose a run workflow" = "javascript/workflows.md" },
+        ] },
+        { "User guide" = [
+            { Overview = "javascript/user-guide.md" },
+            { "Build and run" = [
+                { "Inspect and configure a model" = "javascript/guides/configure-model.md" },
+                { "Run a model" = "javascript/guides/run-model.md" },
+                { "Integrate with a frontend" = "javascript/guides/frontend.md" },
+            ] },
+            { "Observe results" = [
+                { "Collect results and statistics" = "javascript/guides/collect-results.md" },
+                { "Read binary output" = "javascript/guides/read-output.md" },
+                { "Load files and download output" = "javascript/guides/files.md" },
+            ] },
+            { "Control and scenarios" = [
+                { "Runtime forcings" = "javascript/guides/runtime-forcings.md" },
+                { "Hotstarts, checkpoints, and forks" = "javascript/guides/checkpoints-and-forks.md" },
+            ] },
+            { "JavaScript behavior" = [
+                { "Lifecycle and ownership" = "javascript/concepts/lifecycle.md" },
+                { "Handles, records, and snapshots" = "javascript/concepts/results.md" },
+                { "Units and time" = "javascript/concepts/units-and-time.md" },
+                { "Errors and recovery" = "javascript/concepts/errors-and-recovery.md" },
+            ] },
+        ] },
+        { "Migration and support" = [
+            { "Moving from Python" = "javascript/migrating-from-python.md" },
+            { "Compatibility and limitations" = "javascript/compatibility.md" },
+            { Troubleshooting = "javascript/troubleshooting.md" },
+        ] },
+        { "API reference" = [
+            { Overview = "javascript/api/index.md" },
+            { Simulation = "javascript/api/simulation.md" },
+            { "Binary output" = "javascript/api/output.md" },
+            { "Simulation options" = "javascript/api/options.md" },
+            { Objects = [
+                { Node = "javascript/api/node.md" },
+                { Link = "javascript/api/link.md" },
+                { Subcatchment = "javascript/api/subcatchment.md" },
+                { "Rain gage" = "javascript/api/rain-gage.md" },
+                { RDII = "javascript/api/rdii.md" },
+                { LID = "javascript/api/lid.md" },
+                { Collections = "javascript/api/collections.md" },
+            ] },
+            { "Model definitions" = "javascript/api/definitions.md" },
+            { "Snapshots and statistics" = "javascript/api/snapshots.md" },
+            { "Types and enums" = "javascript/api/types.md" },
+            { Exceptions = "javascript/api/exceptions.md" },
+        ] },
+    ] },
+]
+
+
+docs_dir = "docs"
+site_name = "swmmrs"
+site_description = "Parity-first Rust port of the EPA SWMM solver"
+repo_url = "https://github.com/swmm-rs/swmmrs"
+repo_name = "swmm-rs/swmmrs"
+edit_uri = "edit/main/docs/"
+watch = ["README.md", "docs/swmm_pygments/src/swmm_pygments/lexer.py", "docs/typescript-docs/.generated"]
+extra_css = [
+    "stylesheets/solarized.css",
+    "stylesheets/home.css",
+    "stylesheets/toc-collapse.css",
+    "stylesheets/mermaid-zoom.css",
+]
+extra_javascript = [
+    "javascripts/toc-collapse.js",
+    "javascripts/mermaid-zoom.js",
+    "javascripts/mathjax.js",
+    "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
+]
+
+[project.extra]
+generator = false
+
+[project.extra.version]
+default = "stable"
+
+[project.theme]
+logo = "_static/img/logo.png"
+favicon = "_static/img/logo.png"
+features = [
+    "content.code.copy",
+    "content.code.annotate",
+    "content.tooltips",
+    "navigation.footer",
+    "navigation.indexes",
+    "navigation.instant",
+    "navigation.instant.prefetch",
+    "navigation.instant.progress",
+    "navigation.path",
+    "navigation.tabs",
+    "navigation.tabs.sticky",
+    "navigation.top",
+    "navigation.tracking",
+    "search.highlight",
+    "search.share",
+    "search.suggest",
+    "toc.follow",
+]
+
+
+[project.theme.icon]
+repo = "fontawesome/brands/github-alt"
+
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+
+# Palette toggle for light mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+# Palette toggle for dark mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to system preference"
+
+[project.markdown_extensions.pymdownx.arithmatex]
+generic = true
+
+[project.markdown_extensions.swmm_pygments]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.snippets]
+check_paths = true
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [
+    { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.pymdownx.emoji]
+emoji_generator = "zensical.extensions.emoji.to_svg"
+emoji_index = "zensical.extensions.emoji.twemoji"
+# [project.markdown_extensions]
+# "pymdownx.snippets" = { check_paths = true }
+
+[project.markdown_extensions.abbr]
+
+[project.markdown_extensions.toc]
+toc_depth = 5
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["python/src"]
+inventories = ["https://docs.python.org/3/objects.inv"]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_style = "numpy"
+docstring_section_style = "spacy"
+
+relative_crossrefs = true
+scoped_crossrefs = true
+signature_crossrefs = true
+unwrap_annotated = true
+
+filters = "public"
+inherited_members = true
+summary = true
+# show_labels = true
+
+heading_level = 3
+parameter_headings = true
+type_parameter_headings = true
+show_root_heading = false
+show_root_toc_entry = false
+show_root_full_path = false
+show_symbol_type_heading = true
+show_symbol_type_toc = true
+
+line_length = 88
+merge_init_into_class = false
+separate_signature = true
+show_signature_annotations = true
+show_signature_type_parameters = true
+
+backlinks = "tree"
+show_bases = false
+show_inheritance_diagram = true
+
+show_source = false
+
+[project.plugins.mkdocstrings.handlers.python.options.docstring_options]
+ignore_init_summary = true

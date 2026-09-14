@@ -1,0 +1,66 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Purpose-built RDII interface consumer
+
+[OPTIONS]
+FLOW_UNITS           CFS
+FLOW_ROUTING         DYNWAVE
+START_DATE           01/01/2020
+START_TIME           00:00:00
+REPORT_START_DATE    01/01/2020
+REPORT_START_TIME    00:00:00
+END_DATE             01/01/2020
+END_TIME             06:00:00
+REPORT_STEP          00:05:00
+WET_STEP             00:05:00
+DRY_STEP             01:00:00
+ROUTING_STEP         00:00:05
+THREADS              1
+
+[FILES]
+USE RDII "rdii-interface.bin"
+
+[RAINGAGES]
+;;Name  Format  Interval  SCF  Source
+GAGE    VOLUME  00:05     1.0  TIMESERIES RAIN
+
+[JUNCTIONS]
+;;Name  Elevation  MaxDepth  InitDepth  SurDepth  Aponded
+J1      0          5         0          0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT     -1         FREE              NO
+
+[CONDUITS]
+;;Name  From Node  To Node  Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+C1      J1         OUT      200     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link  Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+C1      CIRCULAR  2      0      0      0      1
+
+[HYDROGRAPHS]
+;;Name  Rain Gage/Month  Response  R     T    K    IAmax  IArec  IAinit
+UH1     GAGE
+UH1     Jan              Short     0.20  0.5  2.0  0      0      0
+UH1     Jan              Medium    0.00  1.0  2.0  0      0      0
+UH1     Jan              Long      0.00  2.0  2.0  0      0      0
+
+[RDII]
+;;Node  Unit Hydrograph  Sewershed Area
+J1      UH1              1.0
+
+[TIMESERIES]
+;;Name  Date        Time   Value
+RAIN    01/01/2020  00:00  0.0
+RAIN    01/01/2020  00:05  0.50
+RAIN    01/01/2020  00:10  0.0
+RAIN    01/01/2020  06:00  0.0
+
+[REPORT]
+INPUT              NO
+CONTROLS           NO
+SUBCATCHMENTS      NONE
+NODES              ALL
+LINKS              ALL

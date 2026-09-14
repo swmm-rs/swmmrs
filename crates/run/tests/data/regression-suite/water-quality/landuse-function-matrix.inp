@@ -1,0 +1,120 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Dynamic rainfall/runoff matrix for land-use buildup, washoff, co-pollutants, and BMP removal.
+
+[OPTIONS]
+REPORT_START_TIME    00:00:00
+DRY_STEP             00:30:00
+START_DATE           01/01/2020
+END_TIME             00:00:00
+END_DATE             01/03/2020
+INFILTRATION         HORTON
+DRY_DAYS             5
+THREADS              1
+FLOW_UNITS           CFS
+REPORT_STEP          00:30:00
+REPORT_START_DATE    01/01/2020
+FLOW_ROUTING         DYNWAVE
+LINK_OFFSETS         DEPTH
+WET_STEP             00:05:00
+ROUTING_STEP         00:01:00
+VARIABLE_STEP        0
+START_TIME           00:00:00
+
+[RAINGAGES]
+;;Name  Format     Interval  SCF  Source
+GAGE    INTENSITY  00:15     1.0  TIMESERIES Rain
+
+[SUBCATCHMENTS]
+;;Name  Rain Gage  Outlet  Area  %Imperv  Width  %Slope  CurbLen  SnowPack
+S_EXP   GAGE       J1      1.0   100      200    1.0     100
+S_POW   GAGE       J1      1.0   100      200    1.0     100
+S_EXT   GAGE       J1      1.0   100      200    1.0     100
+
+[SUBAREAS]
+;;Name  N-Imperv  N-Perv  S-Imperv  S-Perv  PctZero  RouteTo
+S_EXP   0.01      0.1     0.02      0.05    100      OUTLET
+S_POW   0.01      0.1     0.02      0.05    100      OUTLET
+S_EXT   0.01      0.1     0.02      0.05    100      OUTLET
+
+[INFILTRATION]
+;;Name  MaxRate  MinRate  Decay  DryTime  MaxInfil
+S_EXP   3.0      0.5      4.0    7.0      0
+S_POW   3.0      0.5      4.0    7.0      0
+S_EXT   3.0      0.5      4.0    7.0      0
+
+[JUNCTIONS]
+;;Name  Elevation  MaxDepth  InitDepth  SurDepth  Aponded
+J1      0          5         0          0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT     -1         FREE              NO
+
+[CONDUITS]
+;;Name  From Node  To Node  Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+C1      J1         OUT      200     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link  Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+C1      CIRCULAR  2.0    0      0      0      1
+
+[POLLUTANTS]
+;;Name  Units  Crain  Cgw  Crdii  Kdecay  SnowOnly  Co-Pollutant  Co-Frac  Cdwf  Cinit
+SED     MG/L   0      0    0      0       NO        *             0        0     0
+METAL   MG/L   0      0    0      0       NO        SED           0.25     0     0
+
+[LANDUSES]
+;;Name  SweepInterval  Availability  LastSweep
+EXTERNAL  0            0             0
+EXPON     0            0             0
+POWER     0            0             0
+
+[COVERAGES]
+;;Subcatchment  LandUse  Percent
+S_EXP           EXPON    100
+S_EXT           EXTERNAL 100
+S_POW           POWER    100
+
+[BUILDUP]
+;;LandUse  Pollutant  Function  Coeff1  Coeff2  Coeff3       PerUnit
+EXPON      SED        EXP       100     0.5     0             AREA
+EXPON      METAL      NONE      0       0       0             AREA
+POWER      SED        POW       100     20      0.5           AREA
+POWER      METAL      NONE      0       0       0             AREA
+EXTERNAL   SED        EXT       100     1.0     ExternalRate  AREA
+EXTERNAL   METAL      NONE      0       0       0             AREA
+
+[WASHOFF]
+;;LandUse  Pollutant  Function  Coeff1  Coeff2  SweepRmvl  BmpRmvl
+EXPON      SED        EXP       0.20    1.2     0          40
+EXPON      METAL      NONE      0       0       0          0
+POWER      SED        EXP       0.30    1.0     0          30
+POWER      METAL      NONE      0       0       0          0
+EXTERNAL   SED        RC        50      1.2     0          20
+EXTERNAL   METAL      NONE      0       0       0          0
+
+[TIMESERIES]
+;;Name        Date        Time   Value
+Rain          01/01/2020  00:00  0
+Rain          01/01/2020  23:45  0
+Rain          01/02/2020  00:00  0.6
+Rain          01/02/2020  06:00  0.6
+Rain          01/02/2020  06:15  0
+Rain          01/02/2020  11:45  0
+Rain          01/02/2020  12:00  0.9
+Rain          01/02/2020  16:00  0.9
+Rain          01/02/2020  16:15  0
+Rain          01/03/2020  00:00  0
+ExternalRate  01/01/2020  00:00  20
+ExternalRate  01/01/2020  12:00  40
+ExternalRate  01/02/2020  00:00  30
+ExternalRate  01/02/2020  12:00  15
+ExternalRate  01/03/2020  00:00  10
+
+[REPORT]
+INPUT          YES
+CONTROLS       NO
+SUBCATCHMENTS  ALL
+NODES          ALL
+LINKS          ALL

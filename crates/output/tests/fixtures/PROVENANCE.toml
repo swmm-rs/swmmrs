@@ -1,0 +1,43 @@
+# Immutable swmm-output fixture provenance. Tests never regenerate these files.
+
+[legacy]
+path = "legacy/Model.out"
+sha256 = "64a9d61b169dcf6587d954a4d3898483b0c0fdd1d89d328dcf33b6b0b4824cfb"
+byte_length = 225442
+solver_release = 51014
+writer = "SWMM 5.1.014"
+writer_source = "https://github.com/karosc/swmm-pandas"
+writer_revision = "410f19013149f6c995251d7df888803b1c70fdd8"
+source_license = "CC-BY-4.0"
+source_license_file = "../../../../thirdparty/licenses/SWMM-PANDAS-CC-BY-4.0.txt"
+source_input = "tests/data/Model.inp"
+source_input_revision = "410f19013149f6c995251d7df888803b1c70fdd8"
+source_input_git_blob = "02212e62c4483b7767205e25edc345befab0e797"
+generation_command = "canonical swmm-pandas tests/data/Model.out artifact at writer_revision (copied without regeneration)"
+
+[expanded]
+input_path = "expanded/minimal.inp"
+input_sha256 = "06bf54ac964124cf0e21cf1adec13e56465420bcd6a3400ecc9ebca1907a91bf"
+input_byte_length = 1329
+output_path = "expanded/minimal.out"
+output_sha256 = "5d53760cec7e7df32816e710b16a2fb614d8ac8586c4e523313ea3e24876e201"
+output_byte_length = 1463
+solver_release = 53000
+writer = "OWA SWMM 5.3.0"
+writer_source = "https://github.com/OpenWaterAnalytics/Stormwater-Management-Model"
+writer_revision = "02192473c7f222faf4277a264e2ccc107ab68f0b"
+writer_build_id = "3d7787b9-6e1a-3f58-84f4-a70790301497"
+generation_cwd = "crates/output/tests/fixtures/expanded"
+generation_command = "./.owa-swmm-5.3.0 minimal.inp minimal.rpt minimal.out"
+
+writer_compile_command = "gcc -std=c99 -O2 -fopenmp -D_GNU_SOURCE -include sys/types.h -DOS_UNIX -I c_swmm -I c_swmm/solver -I c_swmm/solver/include -I c_swmm/shared -I c_swmm/run c_swmm/solver/*.c c_swmm/shared/*.c c_swmm/run/main.c c_swmm/run/timer.c -lm -o crates/output/tests/fixtures/expanded/.owa-swmm-5.3.0"
+
+[incomplete]
+output_path = "incomplete/minimal-partial-period.out"
+output_sha256 = "0aba87e26c949f4e79ed4a96e8388dfb3dd6fb9fd61eca2273fdc5c2f3e9c335"
+output_byte_length = 1347
+source_output_path = "expanded/minimal.out"
+source_output_sha256 = "5d53760cec7e7df32816e710b16a2fb614d8ac8586c4e523313ea3e24876e201"
+complete_periods = 5
+partial_period_bytes = 92
+generation_command = "dd if=expanded/minimal.out of=incomplete/minimal-partial-period.out bs=1 count=1347 status=none"

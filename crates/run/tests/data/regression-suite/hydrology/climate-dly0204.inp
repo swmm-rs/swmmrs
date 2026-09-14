@@ -1,0 +1,69 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Canadian DLY02/DLY04 temperature and evaporation records driving rainfall runoff.
+
+[OPTIONS]
+WET_STEP             00:05:00
+END_TIME             00:00:00
+INFILTRATION         HORTON
+START_DATE           07/01/2020
+DRY_DAYS             0
+START_TIME           00:00:00
+ROUTING_STEP         00:00:30
+END_DATE             07/05/2020
+FLOW_UNITS           CFS
+REPORT_START_DATE    07/01/2020
+REPORT_STEP          01:00:00
+DRY_STEP             00:15:00
+REPORT_START_TIME    00:00:00
+FLOW_ROUTING         KINWAVE
+LINK_OFFSETS         DEPTH
+
+[EVAPORATION]
+DRY_ONLY             NO
+FILE                 1 1 1 1 1 1 1 1 1 1 1 1
+
+[TEMPERATURE]
+WINDSPEED            MONTHLY 5 5 5 5 5 5 5 5 5 5 5 5
+FILE                 "climate-dly0204.dat" 07/01/2020 C10
+
+[RAINGAGES]
+Gage    INTENSITY  1:00  1.0  TIMESERIES Rain
+
+[SUBCATCHMENTS]
+S1      Gage  J1  1  70  200  1  0
+
+[SUBAREAS]
+S1      0.01  0.10  0.02  0.05  25  OUTLET
+
+[INFILTRATION]
+S1      1.0  0.2  4.0  7.0  0
+
+[JUNCTIONS]
+J1      1  5  0  0  0
+
+[OUTFALLS]
+OUT     0  FREE  NO
+
+[CONDUITS]
+C1      J1  OUT  100  0.013  0  0  0  0
+
+[XSECTIONS]
+C1      CIRCULAR  1  0  0  0  1
+
+[TIMESERIES]
+Rain    07/01/2020  00:00  0
+Rain                06:00  0.8
+Rain                07:00  0
+Rain    07/03/2020  18:00  0.4
+Rain                20:00  0
+Rain    07/05/2020  00:00  0
+
+[REPORT]
+INPUT          YES
+CONTINUITY     YES
+FLOWSTATS      YES
+CONTROLS       NO
+SUBCATCHMENTS  ALL
+NODES          ALL
+LINKS          ALL

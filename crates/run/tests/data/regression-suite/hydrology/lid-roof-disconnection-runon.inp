@@ -1,0 +1,68 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Rainfall-driven roof disconnection with paired untreated runoff.
+
+[OPTIONS]
+REPORT_START_TIME    00:00:00
+REPORT_STEP          00:05:00
+START_TIME           00:00:00
+ROUTING_STEP         00:00:30
+DRY_STEP             00:05:00
+FLOW_UNITS           CFS
+END_TIME             06:00:00
+FLOW_ROUTING         KINWAVE
+WET_STEP             00:05:00
+REPORT_START_DATE    01/01/2025
+INFILTRATION         HORTON
+END_DATE             01/01/2025
+START_DATE           01/01/2025
+
+[EVAPORATION]
+CONSTANT             0.0
+
+[RAINGAGES]
+;;Name  Format     Interval  SCF  Source
+RAIN    INTENSITY  00:15     1.0  TIMESERIES Rainfall
+
+[SUBCATCHMENTS]
+;;Name     Rain Gage  Outlet  Area  %Imperv  Width  %Slope  CurbLen
+WITH_RD    RAIN       OUT     1.0   100      200    1.0     0
+WITHOUT_RD RAIN       OUT     1.0   100      200    1.0     0
+
+[SUBAREAS]
+;;Name     N-Imperv  N-Perv  S-Imperv  S-Perv  PctZero  RouteTo
+WITH_RD    0.01      0.10    0.02      0.05    25       OUTLET
+WITHOUT_RD 0.01      0.10    0.02      0.05    25       OUTLET
+
+[INFILTRATION]
+;;Name     MaxRate  MinRate  Decay  DryTime  MaxInfil
+WITH_RD    3.0      0.5      4.0    7.0      0
+WITHOUT_RD 3.0      0.5      4.0    7.0      0
+
+[LID_CONTROLS]
+;;Name  Type       Layer    Parameters
+RD      RD
+RD      SURFACE    1.0      0.10  0.0  0.50  5.0
+RD      DRAIN      0.0      0.25  1.0  0.0
+
+[LID_USAGE]
+;;Subcatchment  LID Process  Number  Area   Width  InitSat  FromImp  ToPerv  RptFile  DrainTo  FromPerv
+WITH_RD         RD           1       5000   50     0        100      0       *        *        0
+
+[OUTFALLS]
+;;Name  Elevation  Type  StageData  Gated
+OUT     0          FREE             NO
+
+[TIMESERIES]
+;;Name      Date        Time   Value
+Rainfall    01/01/2025  00:00  0
+Rainfall                00:15  1.0
+Rainfall                01:15  1.0
+Rainfall                01:30  0
+Rainfall                06:00  0
+
+[REPORT]
+INPUT          YES
+SUBCATCHMENTS  ALL
+NODES          ALL
+LINKS          ALL

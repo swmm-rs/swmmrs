@@ -1,0 +1,53 @@
+[TITLE]
+Regulator configuration integration model.
+
+[OPTIONS]
+FLOW_UNITS           CFS
+FLOW_ROUTING         KINWAVE
+LINK_OFFSETS         DEPTH
+START_DATE           01/01/2020
+START_TIME           00:00:00
+REPORT_START_DATE    01/01/2020
+REPORT_START_TIME    00:00:00
+END_DATE             01/01/2020
+END_TIME             02:00:00
+REPORT_STEP          00:05:00
+WET_STEP             00:01:00
+DRY_STEP             00:05:00
+ROUTING_STEP         00:00:30
+
+[STORAGE]
+Pump-Storage 8 5 0 FUNCTIONAL 100 0 0 0 0
+Orifice-Storage 8 5 0 FUNCTIONAL 100 0 0 0 0
+Weir-Storage 8 5 0 FUNCTIONAL 100 0 0 0 0
+Outlet-Storage 8 5 0 FUNCTIONAL 100 0 0 0 0
+
+[OUTFALLS]
+Pump-Out 0 FREE NO
+Orifice-Out 0 FREE NO
+Weir-Out 0 FREE NO
+Outlet-Out 0 FREE NO
+
+[PUMPS]
+Pump-A Pump-Storage Pump-Out PumpCurve ON 0 0
+
+[ORIFICES]
+Orifice-A Orifice-Storage Orifice-Out SIDE 0 0.65 NO
+
+[WEIRS]
+Weir-A Weir-Storage Weir-Out TRANSVERSE 0 3.3 NO 0 0 NO
+
+[OUTLETS]
+Outlet-A Outlet-Storage Outlet-Out 0 FUNCTIONAL/DEPTH 1.0 1.0 NO
+
+[XSECTIONS]
+Orifice-A CIRCULAR 2 0 0 0 1
+Weir-A RECT_OPEN 2 2 0 0 1
+
+[CURVES]
+PumpCurve PUMP4 0 0
+PumpCurve 5 2
+Shape-A SHAPE 0 0
+Shape-A 1 1
+RatingCurve RATING 0 0
+RatingCurve 1 1

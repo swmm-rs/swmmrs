@@ -1,0 +1,105 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Tabular storage routed through all five pump curve types.
+
+[OPTIONS]
+END_TIME             03:00:00
+WET_STEP             00:01:00
+START_DATE           01/01/2020
+FLOW_ROUTING         KINWAVE
+DRY_STEP             00:01:00
+START_TIME           00:00:00
+REPORT_START_TIME    00:00:00
+ROUTING_STEP         00:00:10
+SKIP_STEADY_STATE    NO
+INFILTRATION         HORTON
+REPORT_START_DATE    01/01/2020
+LINK_OFFSETS         DEPTH
+END_DATE             01/01/2020
+FLOW_UNITS           CFS
+REPORT_STEP          00:05:00
+
+[STORAGE]
+;;Name  Elevation  MaxDepth  InitDepth  Shape    Curve      SurDepth  Fevap
+S3      0          5         1.5        TABULAR  AREA_CURVE 0         0
+S5      0          5         1.5        TABULAR  AREA_CURVE 0         0
+S1      0          5         1.5        TABULAR  AREA_CURVE 0         0
+S4      0          5         1.5        TABULAR  AREA_CURVE 0         0
+S2      0          5         1.5        TABULAR  AREA_CURVE 0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type   Stage  Gated
+O3      0          FIXED  3.0    NO
+O4      0          FIXED  3.0    NO
+O5      0          FIXED  3.0    NO
+O1      0          FIXED  3.0    NO
+O2      0          FIXED  3.0    NO
+
+[PUMPS]
+;;Name  From  To  PumpCurve  Status  Startup  Shutoff
+P1      S1    O1  PC1        ON      0        0
+P3      S3    O3  PC3        ON      0        0
+P4      S4    O4  PC4        ON      0        0
+P5      S5    O5  PC5        ON      0        0
+P2      S2    O2  PC2        ON      0        0
+
+[INFLOWS]
+;;Node  Constituent  TimeSeries  Type  Mfactor  Sfactor  Baseline
+S5      FLOW         INFLOW      FLOW  1        1.10     0
+S4      FLOW         INFLOW      FLOW  1        1.05     0
+S3      FLOW         INFLOW      FLOW  1        1.00     0
+S2      FLOW         INFLOW      FLOW  1        0.95     0
+S1      FLOW         INFLOW      FLOW  1        0.90     0
+
+[CURVES]
+;;Name      Type     X-Value  Y-Value
+PC2         PUMP2    0        0.5
+PC2                  1        3
+PC2                  2        5
+PC2                  3        8
+PC2                  4        10
+PC2                  5        12
+PC3         PUMP3    0        10
+PC3                  1        8
+PC3                  2        6
+PC3                  3        3
+PC3                  4        0
+PC4         PUMP4    0        0
+PC4                  1        2.5
+PC4                  2        5
+PC4                  3        8
+PC4                  5        12
+AREA_CURVE  STORAGE  0        5000
+AREA_CURVE           1        6000
+AREA_CURVE           2        8000
+AREA_CURVE           3        11000
+AREA_CURVE           4        15000
+AREA_CURVE           5        20000
+PC5         PUMP5    0        9
+PC5                  1        7.5
+PC5                  2        5.5
+PC5                  3        3
+PC5                  4        0
+PC1         PUMP1    0        0.5
+PC1                  5000     2
+PC1                  12000    4
+PC1                  25000    7
+PC1                  40000    10
+PC1                  52500    12
+
+[TIMESERIES]
+;;Name  Date  Time   Value
+INFLOW        00:00  5
+INFLOW        00:30  9
+INFLOW        01:00  3
+INFLOW        01:30  10
+INFLOW        02:00  6
+INFLOW        02:30  2
+INFLOW        03:00  0
+
+[REPORT]
+INPUT          YES
+CONTROLS       NO
+SUBCATCHMENTS  NONE
+NODES          ALL
+LINKS          ALL

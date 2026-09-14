@@ -1,0 +1,3 @@
+# Preserve byte-pinned swmm-output fixture contents across platforms.
+crates/output/tests/fixtures/** -text
+*.sh text eol=lf

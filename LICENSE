@@ -1,0 +1,53 @@
+swmmrs repository licensing
+===========================
+
+Copyright 2026 Constantine Karos
+
+Except for the exclusions below, original swmmrs material in this repository is
+licensed under the Apache License, Version 2.0. The complete license text is in
+LICENSES/APACHE-2.0.txt.
+
+This grant includes the public Python and command-line interface source, the
+standalone output reader, documentation, scripts, tests, workflows, and other
+original public-repository material unless a file states different terms.
+
+Exclusions and separate terms
+-----------------------------
+
+1. crates/solver/
+
+   The original swmmrs native solver source is not licensed under the Apache
+   License, Version 2.0. No license to that original source is granted except
+   through a separate written agreement with the copyright holder. This
+   exclusion continues to apply if crates/solver becomes a private git
+   submodule.
+
+   This exclusion does not restrict rights that already exist in incorporated
+   upstream material. Material created by Open Water Analytics contributors
+   remains available under the MIT License, and original USEPA SWMM material is
+   identified by the upstream project as public domain. See
+   THIRD_PARTY_NOTICES.md and thirdparty/licenses/OWA-SWMM-MIT.txt.
+
+2. thirdparty/
+
+   Third-party and vendored material is governed by its own license and notice
+   files, not by this repository license. See THIRD_PARTY_NOTICES.md.
+
+3. Native release artifacts
+
+   Official wheels and command-line archives may combine Apache-2.0-licensed
+   interface code with the separately licensed native solver. Original swmmrs
+   binary components are freeware under the swmmrs Binary Runtime License,
+   Version 1.0, reproduced in LICENSES/SWMMRS-BINARY-RUNTIME.txt. That license
+   permits use, modification, and redistribution of official compiled release
+   artifacts for any purpose while granting no access to, or rights in,
+   undistributed private solver source. Third-party components remain under
+   their own terms.
+
+4. Separately marked files
+
+   A file or directory carrying its own license or copyright notice remains
+   governed by those terms.
+
+Nothing in this file grants permission to use project or contributor trademarks
+except as allowed by the applicable component license.

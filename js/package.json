@@ -1,0 +1,53 @@
+{
+  "name": "@swmmrs/swmmrs",
+  "version": "0.2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swmm-rs/swmmrs.git",
+    "directory": "js"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    },
+    "./worker.js": "./worker.js",
+    "./worker-node.js": "./worker-node.js"
+  },
+  "types": "./index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "worker.js",
+    "worker-node.js",
+    "lib/swmmrs",
+    "src/swmmrs",
+    "dist/swmmrs.js",
+    "dist/swmmrs.d.ts",
+    "dist/swmmrs_bg.wasm",
+    "dist/snippets/**/*.js",
+    "dist/serial/swmmrs.js",
+    "dist/serial/swmmrs.d.ts",
+    "dist/serial/swmmrs_bg.wasm",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "npm run build:wasm && npm run build:ts",
+    "build:wasm": "./build.sh",
+    "build:ts": "tsc -p tsconfig.json",
+    "typecheck": "npm run build:wasm -- --dev && npm run build:ts && tsc -p tests/typing/tsconfig.json",
+    "test": "npm run build:wasm -- --dev && npm run build:ts && playwright test",
+    "test:parity": "node --test tests/parity.mjs",
+    "test:package": "node tests/package.mjs",
+    "test:docs": "node tests/docs.mjs",
+    "start": "node serve.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "typescript": "7.0.2"
+  }
+}

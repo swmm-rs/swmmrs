@@ -1,0 +1,115 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Eight independent, submerged force mains using Darcy-Weisbach friction.
+
+[OPTIONS]
+END_DATE             01/01/2020
+REPORT_START_TIME    00:00:00
+MIN_SURFAREA         12.566
+LINK_OFFSETS         DEPTH
+INFILTRATION         HORTON
+REPORT_STEP          00:05:00
+END_TIME             02:00:00
+MAX_TRIALS           8
+ROUTING_STEP         00:00:05
+START_DATE           01/01/2020
+FORCE_MAIN_EQUATION  D-W
+REPORT_START_DATE    01/01/2020
+VARIABLE_STEP        0.75
+HEAD_TOLERANCE       0.005
+WET_STEP             00:01:00
+THREADS              2
+DRY_STEP             00:01:00
+START_TIME           00:00:00
+FLOW_UNITS           CFS
+MINIMUM_STEP         0.5
+FLOW_ROUTING         DYNWAVE
+
+[STORAGE]
+;;Name  Elevation  MaxDepth  InitDepth  Shape       A     B  C  SurDepth  Fevap
+S8      90.5       8         2.5        FUNCTIONAL  1000  0  0  0         0
+S1      90.5       8         2.5        FUNCTIONAL  1000  0  0  0         0
+S6      90.5       8         2.5        FUNCTIONAL  1000  0  0  0         0
+S4      90.5       8         2.5        FUNCTIONAL  1000  0  0  0         0
+S3      90.5       8         2.5        FUNCTIONAL  1000  0  0  0         0
+S5      90.5       8         2.5        FUNCTIONAL  1000  0  0  0         0
+S7      90.5       8         2.5        FUNCTIONAL  1000  0  0  0         0
+S2      90.5       8         2.5        FUNCTIONAL  1000  0  0  0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type   Stage  Gated
+O6      90         FIXED  91.5   NO
+O3      90         FIXED  91.5   NO
+O1      90         FIXED  91.5   NO
+O5      90         FIXED  91.5   NO
+O7      90         FIXED  91.5   NO
+O4      90         FIXED  91.5   NO
+O2      90         FIXED  91.5   NO
+O8      90         FIXED  91.5   NO
+
+[CONDUITS]
+;;Name  From  To  Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+FM3     S3    O3  500     0.013      0         0          2.5       0
+FM6     S6    O6  500     0.013      0         0          2.5       0
+FM5     S5    O5  500     0.013      0         0          2.5       0
+FM1     S1    O1  500     0.013      0         0          2.5       0
+FM2     S2    O2  500     0.013      0         0          2.5       0
+FM8     S8    O8  500     0.013      0         0          2.5       0
+FM4     S4    O4  500     0.013      0         0          2.5       0
+FM7     S7    O7  500     0.013      0         0          2.5       0
+
+[XSECTIONS]
+;;Link  Shape       Diameter  RoughnessHeight  Geom3  Geom4  Barrels
+FM2     FORCE_MAIN  1         0.005            0      0      1
+FM5     FORCE_MAIN  1         0.005            0      0      1
+FM3     FORCE_MAIN  1         0.005            0      0      1
+FM8     FORCE_MAIN  1         0.005            0      0      1
+FM1     FORCE_MAIN  1         0.005            0      0      1
+FM7     FORCE_MAIN  1         0.005            0      0      1
+FM6     FORCE_MAIN  1         0.005            0      0      1
+FM4     FORCE_MAIN  1         0.005            0      0      1
+
+[INFLOWS]
+;;Node  Constituent  TimeSeries  Type  Mfactor  Sfactor  Baseline
+S1      FLOW         FLOW1       FLOW  1        1        0
+S7      FLOW         FLOW3       FLOW  1        1        0
+S2      FLOW         FLOW2       FLOW  1        1        0
+S3      FLOW         FLOW3       FLOW  1        1        0
+S5      FLOW         FLOW1       FLOW  1        1        0
+S8      FLOW         FLOW4       FLOW  1        1        0
+S6      FLOW         FLOW2       FLOW  1        1        0
+S4      FLOW         FLOW4       FLOW  1        1        0
+
+[TIMESERIES]
+;;Name  Date  Time   Value
+FLOW3         00:00  3.2
+FLOW3         00:30  4.7
+FLOW3         01:00  3.0
+FLOW3         01:30  5.2
+FLOW3         01:50  3.3
+FLOW3         02:00  3.3
+FLOW2         00:00  3.0
+FLOW2         00:25  5.0
+FLOW2         00:55  3.4
+FLOW2         01:25  4.6
+FLOW2         01:45  3.1
+FLOW2         02:00  3.1
+FLOW1         00:00  2.8
+FLOW1         00:20  4.5
+FLOW1         00:50  3.2
+FLOW1         01:20  5.0
+FLOW1         01:40  3.0
+FLOW1         02:00  3.0
+FLOW4         00:00  3.4
+FLOW4         00:20  4.8
+FLOW4         00:45  3.3
+FLOW4         01:15  4.9
+FLOW4         01:45  3.2
+FLOW4         02:00  3.2
+
+[REPORT]
+INPUT          YES
+CONTROLS       NO
+SUBCATCHMENTS  NONE
+NODES          ALL
+LINKS          ALL

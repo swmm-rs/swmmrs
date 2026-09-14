@@ -1,0 +1,1 @@
+# Override wasm-pack's wildcard .gitignore when packaging the parent JS package.

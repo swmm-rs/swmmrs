@@ -1,0 +1,29 @@
+[package]
+name = "swmm-output"
+version = "0.2.1"
+description = "Standalone reader for finalized and recoverable SWMM binary output files"
+edition = { workspace = true }
+rust-version = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+authors = { workspace = true }
+license = { workspace = true }
+autobins = false
+
+[dependencies]
+
+[dev-dependencies]
+tempfile = "3"
+
+[lib]
+name = "swmm_output"
+bench = false
+
+[[bin]]
+name = "output-reader-bench"
+path = "src/bin/output_reader_bench.rs"
+
+[[bench]]
+name = "output_reader"
+path = "benches/output_reader.rs"
+harness = false

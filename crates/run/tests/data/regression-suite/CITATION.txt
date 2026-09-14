@@ -1,0 +1,55 @@
+Curated regression models in this directory were copied or adapted from these source repositories:
+
+- https://github.com/SWMMEnablement/1729-SWMM5-Models
+- https://github.com/pyswmm/swmm-nrtestsuite
+
+SWMMEnablement/1729-SWMM5-Models is released under The Unlicense:
+https://github.com/SWMMEnablement/1729-SWMM5-Models/blob/main/LICENSE
+
+SWMMEnablement/1729-SWMM5-Models commit used for curation:
+f2965816381a474f9b1ba7483408a0390a44278e
+
+Additional SWMMEnablement commit used for Greenville and stress-model provenance:
+3725238554579ec6cd85e732096156e66d78918d
+
+Files copied from SWMMEnablement/1729-SWMM5-Models:
+- EPA/Example_LID_RB.inp -> hydrology/lid-example_lid_rb.inp
+- Hydrology/SI_GW_Model.inp -> hydrology/groundwater-si_gw_model.inp
+- SWMM5_NCIMM/small_snowmelt_model.inp -> hydrology/snowmelt-small_snowmelt_model.inp
+- Greenville/Greenville_small_snowmelt_model.inp -> hydrology/greenville-lid-snow-groundwater.inp (SAVE directives removed; incomplete file wind-speed directive replaced with zero monthly wind)
+- OWA_update_v5111/events_example.inp -> water-quality/waterquality-events_example.inp
+- DataFiles/events_example.dat -> water-quality/events_example.dat (bundled sidecar for the two water-quality inputs)
+- Hydraulics/inlet_capture_test.inp -> hydraulics/inlets-inlet_capture_test.inp
+- EPA/ALL_Outfall_Types_Model.inp -> hydraulics/outfalls-all_outfall_types_model.inp
+- EPA/swmm5_shapes.inp -> hydraulics/shapes-swmm5_shapes.inp
+- Simon_EPA/Session46_TunnelMH.inp -> hydraulics/slot-surcharge_tunnelmh.inp
+- EPA/Exam80A-SW5.inp -> hydraulics/inertial-damping-full_exam80a-sw5.inp (unused SAVE RUNOFF directive removed)
+- OWA_Extran/Extran3-RC.inp -> hydraulics/outlet-tabular-depth_extran3-rc.inp
+- EPA/Master_Extran_RTC.inp -> controls/rtc-master_extran_rtc.inp
+- OWA_ROUTING/routing_kinwave.inp -> routing/kinwave-routing_kinwave.inp
+- Hydraulics/attenuation_steady_flow.inp -> routing/steady-attenuation_steady_flow.inp
+- Weirs/v14RTCManyRules.inp -> controls/rtc-many-rules.inp (invalid, redundant Rules 21, 27, and 51 removed)
+
+Files copied or adapted from pyswmm/swmm-nrtestsuite:
+- crates/solver/tests/data/lid/test_w_wo_*_2Subcatchments.inp -> hydrology/lid-controls-ghcnd.inp
+- LID/w_wo_{BC,GR,IT,PP,RB,RG,SWALE}_2Subcatchments.inp -> hydrology/lid-*-paired.inp
+- SWMM5_NCIMM/treatment.INP -> water-quality/treatment-expression-rainfall.inp
+- Weirs/2_Weirs_4Subs.inp -> hydraulics/weirs-rainfall-2weirs-4subs.inp
+- crates/solver/tests/data/link_constantinflow.inp -> hydraulics/culvert-roadway-exfiltration.inp
+
+Derived models (edited variants of curated files above):
+- hydrology/groundwater-si_gw_model.inp -> hydrology/rdii-assignment_groundwater-si_gw_model.inp
+- hydrology/lid-example_lid_rb.inp -> hydrology/curvenumber-lid-example_lid_rb.inp
+- water-quality/waterquality-events_example.inp -> water-quality/treatment-waterquality-events_example.inp
+- hydraulics/outfalls-all_outfall_types_model.inp -> hydraulics/elevation-offsets_outfalls-all_outfall_types_model.inp
+
+Purpose-built interface models and fixtures:
+- save_interfaces/save_rainfall.inp and use_interfaces/rainfall-use.inp
+- save_interfaces/save_runoff.inp and use_interfaces/runoff-use.inp
+- save_interfaces/save_hotstart.inp and use_interfaces/hotstart-use.inp
+- save_interfaces/save_rdii.inp and use_interfaces/rdii-use.inp
+- The routing SAVE/USE models are also purpose-built.
+- No interface model is derived from the curated source repositories above.
+- The matching interface fixtures were generated with the official EPA SWMM v5.2.4 solver:
+  https://github.com/USEPA/Stormwater-Management-Model/releases/tag/v5.2.4
+

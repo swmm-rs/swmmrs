@@ -1,0 +1,26 @@
+// Select public exports for the Node reference. API declarations and documentation
+// belong in js/src/swmmrs, not in this documentation entry point.
+export {
+  Node,
+  type NodeConfiguration,
+  type NodePatch,
+  type StorageShapeKind,
+  type StorageShape,
+  type StorageShapePatch,
+  type StorageExfiltration,
+  type StorageExfiltrationPatch,
+  type OutfallBoundaryKind,
+  type OutfallBoundary,
+  type OutfallBoundaryPatch,
+  type DividerRuleKind,
+  type DividerRule,
+  type DividerRulePatch,
+  type NodeResults,
+  type NodeQuality,
+  type NodeQualitySnapshot,
+  type NodeStatistics,
+  type NodeStatisticsSnapshot,
+  type StorageStatistics,
+  type OutfallStatistics,
+  type PollutantValues,
+} from "../../js/src/swmmrs/index.js";

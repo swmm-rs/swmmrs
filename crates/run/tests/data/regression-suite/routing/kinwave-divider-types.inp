@@ -1,0 +1,89 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+All four flow-divider types under kinematic-wave routing.
+
+[OPTIONS]
+ROUTING_STEP         00:00:30
+FLOW_ROUTING         KINWAVE
+INFILTRATION         HORTON
+START_DATE           01/01/2020
+WET_STEP             00:01:00
+LINK_OFFSETS         DEPTH
+REPORT_STEP          00:05:00
+END_DATE             01/01/2020
+REPORT_START_DATE    01/01/2020
+DRY_STEP             00:05:00
+FLOW_UNITS           CFS
+START_TIME           00:00:00
+REPORT_START_TIME    00:00:00
+END_TIME             02:00:00
+
+[DIVIDERS]
+;;Name  Elevation  DivertedLink  Type      Parameters                   MaxDepth InitDepth SurDepth Apond
+DW      10         DW_DIV        WEIR      1.0  2.0  3.0                5        0         0        0
+DC      10         DC_DIV        CUTOFF    2.0                          5        0         0        0
+DT      10         DT_DIV        TABULAR   DIVERSION_CURVE              5        0         0        0
+DO      10         DO_DIV        OVERFLOW                               5        0         0        0
+
+[OUTFALLS]
+;;Name    Elevation  Type  Stage Data  Gated
+DC_MAIN_O 0          FREE              NO
+DT_DIV_O  0          FREE              NO
+DC_DIV_O  0          FREE              NO
+DW_MAIN_O 0          FREE              NO
+DO_DIV_O  0          FREE              NO
+DW_DIV_O  0          FREE              NO
+DO_MAIN_O 0          FREE              NO
+DT_MAIN_O 0          FREE              NO
+
+[CONDUITS]
+;;Name   From Node  To Node    Length  Roughness  InOffset  OutOffset  InitFlow  MaxFlow
+DC_MAIN  DC         DC_MAIN_O  100     0.013      0         0          0         0
+DT_MAIN  DT         DT_MAIN_O  100     0.013      0         0          0         0
+DO_DIV   DO         DO_DIV_O   100     0.013      0         0          0         0
+DW_MAIN  DW         DW_MAIN_O  100     0.013      0         0          0         0
+DC_DIV   DC         DC_DIV_O   100     0.013      0         0          0         0
+DW_DIV   DW         DW_DIV_O   100     0.013      0         0          0         0
+DT_DIV   DT         DT_DIV_O   100     0.013      0         0          0         0
+DO_MAIN  DO         DO_MAIN_O  100     0.013      0         0          0         0
+
+[XSECTIONS]
+;;Link   Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+DC_MAIN  CIRCULAR  2      0      0      0      1
+DT_DIV   CIRCULAR  2      0      0      0      1
+DC_DIV   CIRCULAR  2      0      0      0      1
+DW_MAIN  CIRCULAR  2      0      0      0      1
+DW_DIV   CIRCULAR  2      0      0      0      1
+DT_MAIN  CIRCULAR  2      0      0      0      1
+DO_MAIN  CIRCULAR  2      0      0      0      1
+DO_DIV   CIRCULAR  2      0      0      0      1
+
+[INFLOWS]
+;;Node  Constituent  Time Series  Type  Mfactor  Sfactor  Baseline
+DW      FLOW         INFLOW       FLOW  1        1        0
+DC      FLOW         INFLOW       FLOW  1        1        0
+DT      FLOW         INFLOW       FLOW  1        1        0
+DO      FLOW         INFLOW       FLOW  1        1        0
+
+[TIMESERIES]
+;;Name   Date  Time   Value
+INFLOW         00:00  0
+INFLOW         00:15  1
+INFLOW         00:30  4
+INFLOW         01:00  8
+INFLOW         01:30  2
+INFLOW         02:00  0
+
+[CURVES]
+;;Name            Type       X-Value  Y-Value
+DIVERSION_CURVE   DIVERSION  0        0
+DIVERSION_CURVE               2        0.5
+DIVERSION_CURVE               4        2
+DIVERSION_CURVE               8        6
+
+[REPORT]
+INPUT          YES
+CONTROLS       NO
+SUBCATCHMENTS  NONE
+NODES          ALL
+LINKS          ALL

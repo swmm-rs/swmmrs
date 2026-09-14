@@ -1,0 +1,100 @@
+[TITLE]
+Provenance: purpose-built for swmm-bench.
+Named control variables, expressions, and rain-gage premises.
+
+[OPTIONS]
+ROUTING_STEP         00:00:30
+REPORT_START_TIME    00:00:00
+START_TIME           00:00:00
+REPORT_START_DATE    01/01/2020
+INFILTRATION         HORTON
+DRY_STEP             00:05:00
+DRY_DAYS             0
+END_DATE             01/01/2020
+FLOW_UNITS           CFS
+REPORT_STEP          00:05:00
+FLOW_ROUTING         DYNWAVE
+LINK_OFFSETS         DEPTH
+END_TIME             04:00:00
+START_DATE           01/01/2020
+RULE_STEP            00:01:00
+WET_STEP             00:01:00
+
+[RAINGAGES]
+;;Name  Format     Interval  SCF  Source
+GAGE1   INTENSITY  00:15     1.0  TIMESERIES Rain
+
+[SUBCATCHMENTS]
+;;Name  Rain Gage  Outlet  Area  %Imperv  Width  %Slope  CurbLen  SnowPack
+S1      GAGE1      STORE   1.0   50       200    1.0     0
+
+[SUBAREAS]
+;;Name  N-Imperv  N-Perv  S-Imperv  S-Perv  PctZero  RouteTo
+S1      0.01      0.1     0.05      0.05    25       OUTLET
+
+[INFILTRATION]
+;;Name  MaxRate  MinRate  Decay  DryTime  MaxInfil
+S1      3.0      0.5      4.0    7.0      0
+
+[STORAGE]
+;;Name  Elev.  MaxDepth  InitDepth  Shape       A1    A2  A0  SurDepth  Fevap
+STORE   0       5         0          FUNCTIONAL  1000  0   0   0         0
+
+[OUTFALLS]
+;;Name  Elevation  Type  Stage Data  Gated
+OUT     0          FREE              NO
+
+[ORIFICES]
+;;Name  From Node  To Node  Type  Offset  Qcoeff  Gated  CloseTime
+OR1     STORE      OUT      SIDE  0       0.65    NO     0
+
+[XSECTIONS]
+;;Link  Shape     Geom1  Geom2  Geom3  Geom4  Barrels
+OR1     CIRCULAR  1      0      0      0      1
+
+[CONTROLS]
+VARIABLE STORAGE_DEPTH = NODE STORE DEPTH
+EXPRESSION SCALED_DEPTH = STORAGE_DEPTH * 2
+
+RULE EXPRESSION_AND_RAIN
+IF SCALED_DEPTH > 0.05
+OR GAGE GAGE1 INTENSITY > 0.01
+THEN ORIFICE OR1 SETTING = 1.0
+ELSE ORIFICE OR1 SETTING = 0.25
+PRIORITY 1
+
+RULE PAST_RAIN
+IF GAGE GAGE1 1 > 0.0
+THEN ORIFICE OR1 SETTING = 0.8
+PRIORITY 2
+
+RULE ELAPSED_TIME
+IF SIMULATION TIME = 01:00
+THEN ORIFICE OR1 SETTING = 0.6
+PRIORITY 3
+
+RULE OPEN_DURATION
+IF ORIFICE OR1 TIMEOPEN > 00:10
+THEN ORIFICE OR1 SETTING = 0.7
+PRIORITY 4
+
+RULE CLOSED_DURATION
+IF ORIFICE OR1 TIMECLOSED > 00:10
+THEN ORIFICE OR1 SETTING = 0.9
+PRIORITY 5
+
+[TIMESERIES]
+;;Name  Date  Time   Value
+Rain          00:00  0.0
+Rain          00:30  0.5
+Rain          02:00  0.5
+Rain          02:15  0.0
+Rain          04:00  0.0
+
+[REPORT]
+INPUT          YES
+CONTROLS       YES
+AVERAGES       YES
+SUBCATCHMENTS  ALL
+NODES          ALL
+LINKS          ALL
