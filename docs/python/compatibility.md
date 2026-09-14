@@ -8,7 +8,8 @@ and limits to account for.
 
     The native solver [passes broad regression comparisons against EPA SWMM](../regression-validation.md) and, among the [real-world benchmarks](../benchmark-results.md), is faster than EPA SWMM
     while maintaining a small result distance from the original engine. Python adds isolated simulations, typed model access, interactive controls, checkpoints, snapshots, statistics, and structured binary-output queries.
-    The solver port is complete, but `swmmrs` and its public APIs remain pre-release. Published results are strong parity evidence, not proof for every model or routing condition; compare critical production projects against a trusted EPA SWMM release.
+    
+The solver port is complete, but `swmmrs` and its public APIs remain pre-release. Published results are strong parity evidence, not proof for every model or routing condition; compare critical production projects against a trusted EPA SWMM release.
 
 ## Requirements and distribution
 
