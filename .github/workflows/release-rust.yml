@@ -367,6 +367,26 @@ jobs:
                   import os
                   import urllib.request
 
+                  # Draft releases do not create their tag until publication.
+                  # Create it explicitly before the tag verification below.
+                  tag_request = urllib.request.Request(
+                      f"{os.environ['API_URL']}/repos/{os.environ['REPOSITORY']}/git/refs",
+                      data=json.dumps({
+                          "ref": f"refs/tags/{os.environ['TAG']}",
+                          "sha": os.environ["SOURCE_SHA"],
+                      }).encode(),
+                      method="POST",
+                      headers={
+                          "Accept": "application/vnd.github+json",
+                          "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                          "Content-Type": "application/json",
+                          "User-Agent": "swmmrs-release",
+                          "X-GitHub-Api-Version": "2022-11-28",
+                      },
+                  )
+                  with urllib.request.urlopen(tag_request) as response:
+                      json.load(response)
+
                   payload = json.dumps({
                       "tag_name": os.environ["TAG"],
                       "target_commitish": os.environ["SOURCE_SHA"],
