@@ -22,9 +22,19 @@ serde_json = "1"
 serde-wasm-bindgen = "0.6"
 
 [profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
 panic = "abort"
-# Do not ship internal Rust symbol names in the public WASM runtime.
+debug = false
 strip = "symbols"
+incremental = false
 
 [package.metadata.wasm-pack.profile.release]
-wasm-opt = false
+wasm-opt = [
+    "-O3",
+    "--enable-bulk-memory",
+    "--enable-threads",
+    "--enable-simd",
+    "--enable-nontrapping-float-to-int",
+]  
