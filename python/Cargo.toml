@@ -31,5 +31,5 @@ panic = "unwind"
 lto = "fat"
 codegen-units = 1
 debug = false
-strip = "debuginfo"
+strip = "symbols"
 incremental = false
